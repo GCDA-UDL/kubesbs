@@ -49,6 +49,9 @@ URLs, clones and remotes. The earlier k8s-sims Zenodo record was deleted on
   per-pod event scan of the scheduling wait. Before, one pass over thousands of
   pending pods could run for hours without ever checking it (a Kubemark run at
   700 nodes waited 21 h during the 2026-10-23 network outage).
+- SimKube module: kube-prometheus is pinned to commit `8355ca5` (v0.17.0-44), the
+  clone used by every published run; before, a fresh clone took the moving
+  default branch.
 - `run_sweep.sh`: the runner image is pinned by digest
   (`thesmuks/k8s-sims@sha256:162f8e96…`), the image used for every published run;
   the `:latest` tag can move.

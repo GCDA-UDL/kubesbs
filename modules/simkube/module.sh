@@ -28,6 +28,9 @@ cluster_setup(){
 
     if [ ! -d "kube-prometheus" ]; then
         git clone https://github.com/prometheus-operator/kube-prometheus.git
+        # Pinned to the commit used for every published run (June and October 2026);
+        # the default branch moves, so an unpinned clone gets a different stack.
+        git -C kube-prometheus checkout --quiet 8355ca5108bc49927bd130e69d0c5ee7aa3816c9
     fi
 
     cd "kube-prometheus"
