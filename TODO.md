@@ -22,10 +22,12 @@
       `big-spoofing-20261024` match `big-all` (see their `NOTES.md`).
 - [x] **Kubemark at scale:** with `gc_thresh3` raised to 16384 Kubemark leaves the same
       share of pods unscheduled as in June, so that share is not a host limit.
-- [x] **Kubemark run time** included the harness's per-pod event scan of the pending
-      pods (52 % of the run time at 400 nodes, 80–82 % from 800 nodes). Fixed on
-      2026-10-26: one `FailedScheduling` query per pass. Re-run all simulators with
-      the fixed harness (session 3) and use it as the paper's primary data.
+- [ ] **Kubemark run time** includes the harness's per-pod event check of the pending
+      pods (52 % of the run time at 400 nodes, 80–82 % from 800 nodes; CHANGELOG
+      "Known issue"). A correct fix must first wait for the hollow nodes to register
+      (or for the pending count to stabilise) and only then apply a fast check;
+      otherwise Kubemark runs end before late nodes take pods. Until then, report
+      run time split into phases (setup, workload, end-of-run check).
 - [ ] **vanilla pre-check:** every vanilla run first tries `data/test/vanilla/cluster-1.yaml`,
       which does not exist, and logs "Cluster setup failed" (results go to `/tmp`, the
       benchmark rows are unaffected). Add the file or skip the pre-check.

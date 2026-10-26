@@ -49,15 +49,21 @@ URLs, clones and remotes. The earlier k8s-sims Zenodo record was deleted on
   per-pod event scan of the scheduling wait. Before, one pass over thousands of
   pending pods could run for hours without ever checking it (a Kubemark run at
   700 nodes waited 21 h during the 2026-10-23 network outage).
-- `kube-run.sh`: the scheduling wait queried the events of each pending pod
-  separately, one `kubectl` call per pod and pass. With Kubemark at scale this scan
-  took 52 % of the measured run time at 400 nodes and 80–82 % from 800 nodes, so
-  Kubemark's run time mostly measured the harness. It now reads all
-  `FailedScheduling` events once per pass. Runs before this fix (`big-all`,
-  `big-spoofing-2026102x`, `benchmark-*`) include the scan in Kubemark's run time.
 - `run_sweep.sh`: the runner image is pinned by digest
   (`thesmuks/k8s-sims@sha256:162f8e96…`), the image used for every published run;
   the `:latest` tag can move.
+
+### Known issue (documented, harness unchanged)
+
+- The scheduling wait in `kube-run.sh` ends a run when every pending pod has a
+  `FailedScheduling` event, and it checks this with one `kubectl get events` call
+  per pending pod and pass. For Kubemark at scale (thousands of pods that stay
+  pending) that check is 52 % of the measured run time at 400 nodes and 80–82 %
+  from 800 nodes (measured from the 2026-10-24 run log). The check cannot simply
+  be made faster: Kubemark creates its hollow nodes and the workload pods at the
+  same time, so the slow check also gives late-registering nodes time to take
+  pods, and a fast check would end runs before they do. All published runs use
+  this harness; `utils/repro` reports the phases of each run.
 
 ### Shipped in v0.2.4 without a changelog entry
 

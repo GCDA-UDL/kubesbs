@@ -27,8 +27,8 @@ Re-run on that server to compare absolute numbers. `run_sweep.sh` pins the
 runner image by digest (`thesmuks/k8s-sims@sha256:162f8e96…`, the image of every
 published run) and records its image ID in `RUN_INFO`.
 
-All the runs above used the harness before the 2026-10-26 fix of the scheduling
-wait (see `CHANGELOG.md`): their Kubemark run times include the per-pod event scan.
+For Kubemark at scale, most of the measured run time is the harness checking the
+events of each pending pod (CHANGELOG, "Known issue"); report it by phase.
 
 ## Re-run the benchmark and compare
 
