@@ -12,7 +12,8 @@
 #   MODULES        space-separated simulators       (default: opensim kwok kube-sched simkube kubemark kcs vanilla)
 #   RUNS           repetitions per configuration    (default: 3)
 #   OUT            output folder                    (default: results-repro/<DATASET>-<host>-<yyyymmdd>)
-#   IMAGE          runner image                     (default: thesmuks/k8s-sims:latest)
+#   IMAGE          runner image                     (default: the digest of thesmuks/k8s-sims used for
+#                                                    every published run; the :latest tag can move)
 #   MEM_THRESHOLD  host memory threshold, percent   (default: 95)
 #   MAX_TIME       max seconds per simulation       (default: 7200; -1 = no limit. The longest
 #                                                    June-2026 run took 2161 s)
@@ -27,7 +28,7 @@ set -euo pipefail
 DATASET="${DATASET:-benchmark}"
 MODULES="${MODULES:-opensim kwok kube-sched simkube kubemark kcs vanilla}"
 RUNS="${RUNS:-3}"
-IMAGE="${IMAGE:-thesmuks/k8s-sims:latest}"
+IMAGE="${IMAGE:-thesmuks/k8s-sims@sha256:162f8e963bc29eb224bf0f1f3110e7b7d9159fdf957c7894d8275a500d015ed4}"
 MEM_THRESHOLD="${MEM_THRESHOLD:-95}"
 MAX_TIME="${MAX_TIME:-7200}"
 DNS="${DNS:-}"

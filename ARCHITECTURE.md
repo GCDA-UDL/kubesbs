@@ -279,7 +279,7 @@ Each module (`modules/<name>/module.sh`) exposes a standard interface consumed b
 
 **Project Name**: k8s-sims
 
-**Repository URL**: https://github.com/GCDA-UDL/k8s-sims (GCDA fork) · upstream https://github.com/TheSmuks/k8s-sims (v0.1, Matias Medina)
+**Repository URL**: https://github.com/GCDA-UDL/kubesbs (KubeSBS, formerly GCDA-UDL/k8s-sims; old URLs redirect) · upstream https://github.com/TheSmuks/k8s-sims (v0.1, Matias Medina)
 
 **Primary Contact**: GCDA (Grupo de Computación Distribuida y Avanzada), Universitat de Lleida
 

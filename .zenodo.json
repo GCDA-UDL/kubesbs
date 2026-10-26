@@ -1,5 +1,5 @@
 {
-  "title": "KubeSBS: a reproducible benchmarking suite for Kubernetes simulators",
+  "title": "KubeSBS: a reproducible measurement framework for Kubernetes cluster simulators",
   "upload_type": "software",
   "description": "KubeSBS (formerly k8s-sims) orchestrates and benchmarks Kubernetes scheduler simulators (kwok, OpenSimulator, kube-scheduler-simulator, SimKube, Kubemark, K8sSim/Volcano, and the pfn k8s-cluster-simulator) over Alibaba, Google Borg, and Azure cluster traces, reporting CPU, memory, run time, and scheduling outcomes. Developed by the GCDA group (Grupo de Computación Distribuida y Avanzada, Universitat de Lleida) as the experimental artifact of a survey on Kubernetes simulation tools. Based on the original toolkit by Matias Medina (TFG UdL 2025, v0.1).",
   "creators": [

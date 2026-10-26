@@ -1,8 +1,8 @@
 
 
-# KubeSBS — a reproducible benchmarking suite for Kubernetes simulators
+# KubeSBS — a reproducible measurement framework for Kubernetes cluster simulators
 
-_Formerly **k8s-sims**. DOI: assigned by Zenodo on the v0.3.0 release (pending)._
+_Formerly **k8s-sims** (repository renamed from `GCDA-UDL/k8s-sims` to `GCDA-UDL/kubesbs` on 2026-10-26; old links and clones redirect). DOI: assigned by Zenodo on the v0.3.0 release (pending)._
 
 KubeSBS runs a selected number of Kubernetes simulators on the same trace-derived
 workloads and measures their CPU, memory, run time and scheduling outcomes. The

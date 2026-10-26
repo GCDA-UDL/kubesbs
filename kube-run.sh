@@ -361,22 +361,15 @@ watch_pod_scheduling(){
                 log INFO "All pods scheduled successfully"
                 break
             fi
-            local FAILURE_COUNT=0
-            for pod_name in "${PENDING_PODS[@]}"; do
-                # One pass queries the events of every pending pod; with thousands of
-                # pods and a slow API server a single pass can take hours, so the max
-                # simulation time must also be checked inside it.
-                check_max_time
-                [[ $RUN_CONDITION = "true" ]] || break
-                local FAILURE_DETECTED
-                FAILURE_DETECTED=$(kubectl get events -n "$NAMESPACE" \
-                    --field-selector "involvedObject.name=$pod_name" 2>/dev/null | \
-                    grep -E "(FailedScheduling|Insufficient cpu|Insufficient memory|No preemption victims found)" || true)
-
-                if [[ -n "$FAILURE_DETECTED" ]]; then
-                    FAILURE_COUNT=$((FAILURE_COUNT + 1))
-                fi
-            done
+            # A pending pod counts as unschedulable once it has a FailedScheduling
+            # event. One query per pass returns all of them; querying each pending
+            # pod separately made a pass take up to ~25 min with thousands of pending
+            # pods (Kubemark at scale), and that time was counted as run time.
+            local FAILURE_COUNT
+            FAILURE_COUNT=$(awk 'NR == FNR { failed[$0] = 1; next } ($0 in failed) { n++ } END { print n + 0 }' \
+                <(kubectl get events -n "$NAMESPACE" --field-selector reason=FailedScheduling \
+                    -o jsonpath='{range .items[*]}{.involvedObject.name}{"\n"}{end}' 2>/dev/null || true) \
+                <(printf '%s\n' "${PENDING_PODS[@]}"))
 
             if [[ $CURRENT_PENDING_COUNT -gt 0 && $FAILURE_COUNT -eq $CURRENT_PENDING_COUNT ]]; then
                 log INFO "All pending pods can not be scheduled." >&2

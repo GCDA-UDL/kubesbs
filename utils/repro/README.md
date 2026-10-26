@@ -23,9 +23,12 @@ repository root.
 | `results-repro/benchmark-spoofing-20261022` (v0.3.0 pre-release, same server, same runner image) | All 7 configurations, 3/3 runs. Unscheduled pods: 0 for every tool except Kubemark (55–70 per run; 40–69 in `benchmark-all`). Run time, CPU time and peak memory within ±11 % for the tools that run longer than a few seconds; kcs and OpenSimulator (1–2 s, < 0.01 GB) match within the 1 s / 0.01 GB resolution. Full table: `COMPARE.txt`. |
 | `results-repro/big-spoofing-20261022` (opensim, kwok, kube-sched) + `big-spoofing-20261024` (simkube, kubemark, kcs) | All 216 runs. Unscheduled pods within 0.1 % of the pods for every tool except Kubemark (≤ 6.9 %, within its run-to-run spread). Run time and CPU within −5 … +11 % except SimKube (−43 … +25 %, as large as its spread between repetitions); peak memory within ±12 % except opensim (−11 … +19 %). Part 1 lost SimKube and Kubemark to a DNS outage and an ARP-table overflow (see `NOTES.md` in both folders). Full table: `big-spoofing-20261024/COMPARE-big.txt`. |
 
-Re-run on that server to compare absolute numbers. `run_sweep.sh` uses the
-runner image already present on the host (`docker run` does not pull a newer
-`:latest`) and records its image ID in `RUN_INFO`.
+Re-run on that server to compare absolute numbers. `run_sweep.sh` pins the
+runner image by digest (`thesmuks/k8s-sims@sha256:162f8e96…`, the image of every
+published run) and records its image ID in `RUN_INFO`.
+
+All the runs above used the harness before the 2026-10-26 fix of the scheduling
+wait (see `CHANGELOG.md`): their Kubemark run times include the per-pod event scan.
 
 ## Re-run the benchmark and compare
 

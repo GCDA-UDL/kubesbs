@@ -5,13 +5,15 @@ toolkit by Matias Medina (TFG UdL 2025) is tagged **`v0.1`** and is the baseline
 
 ## [v0.3.0] — KubeSBS (2026-10-22)
 
-First release under the **KubeSBS** name. The repository URL is unchanged
-(`GCDA-UDL/k8s-sims`). The earlier k8s-sims Zenodo record was deleted on
+First release under the **KubeSBS** name. The repository was renamed from
+`GCDA-UDL/k8s-sims` to `GCDA-UDL/kubesbs` on 2026-10-26; GitHub redirects the old
+URLs, clones and remotes. The earlier k8s-sims Zenodo record was deleted on
 2026-06-29; this release is archived on Zenodo under a new DOI.
 
 ### Renamed and metadata
 
-- Title, `README.md`, `CITATION.cff` and `.zenodo.json` renamed to KubeSBS;
+- Title, `README.md`, `CITATION.cff` and `.zenodo.json` renamed to "KubeSBS: a
+  reproducible measurement framework for Kubernetes cluster simulators";
   version 0.3.0 (0.2.5 was never tagged).
 - Author list and order: Medina, Tomàs, Lérida, Guirado, da Silva (corresponding).
   Affiliation: SEMBAC, Universitat de Lleida.
@@ -47,6 +49,15 @@ First release under the **KubeSBS** name. The repository URL is unchanged
   per-pod event scan of the scheduling wait. Before, one pass over thousands of
   pending pods could run for hours without ever checking it (a Kubemark run at
   700 nodes waited 21 h during the 2026-10-23 network outage).
+- `kube-run.sh`: the scheduling wait queried the events of each pending pod
+  separately, one `kubectl` call per pod and pass. With Kubemark at scale this scan
+  took 52 % of the measured run time at 400 nodes and 80–82 % from 800 nodes, so
+  Kubemark's run time mostly measured the harness. It now reads all
+  `FailedScheduling` events once per pass. Runs before this fix (`big-all`,
+  `big-spoofing-2026102x`, `benchmark-*`) include the scan in Kubemark's run time.
+- `run_sweep.sh`: the runner image is pinned by digest
+  (`thesmuks/k8s-sims@sha256:162f8e96…`), the image used for every published run;
+  the `:latest` tag can move.
 
 ### Shipped in v0.2.4 without a changelog entry
 
