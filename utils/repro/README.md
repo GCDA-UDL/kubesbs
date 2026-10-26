@@ -9,8 +9,9 @@ repository root.
 | [`run_sweep.sh`](run_sweep.sh) | Runs a dataset over a set of simulators in the runner container and writes `<sim>.csv`, `SIM_MODULES` and `RUN_INFO` (host, commit, image) to the output folder. |
 | [`compare_runs.py`](compare_runs.py) | Compares a new run with a reference folder, per simulator and node count. |
 | [`run_phases.py`](run_phases.py) | Splits each run's run time into setup, workload and end-of-run check, from the `harness.log` that `run_sweep.sh` saves next to the CSVs. |
-| [`make_benchmark_bars.py`](make_benchmark_bars.py) | Bar figure of the small-scale benchmark (6 simulators + vanilla). |
-| [`make_paper_plots.py`](make_paper_plots.py) | Line plots of the big sweep (6 simulators, 100–1200 nodes). |
+| [`make_benchmark_bars.py`](make_benchmark_bars.py) | Bar figure of the small-scale benchmark (6 simulators + vanilla), mean and min–max over the given sessions. |
+| [`make_paper_plots.py`](make_paper_plots.py) | Line plots of the big sweep (6 simulators, 100–1200 nodes), mean and min–max band. |
+| [`paper_tables.py`](paper_tables.py) | LaTeX tables of the paper: variability within and between sessions, cost-scaling exponents, run-time phases. |
 
 ## Reference results
 
@@ -48,15 +49,27 @@ python3 utils/repro/compare_runs.py results-repro/benchmark-all results-repro/be
 Run times and resource use depend on the host; the number of unscheduled pods
 should match.
 
-## Regenerate the figures
+## Regenerate the paper's figures and tables
+
+The paper pools two sessions on the reference server (June and October 2026,
+same host, runner image and harness; 6 runs per point). Figures show the mean
+and the min–max of the individual runs.
 
 ```bash
-python3 utils/repro/make_benchmark_bars.py --results results-repro/benchmark-all \
-    --out bars_run_time_total_cpu_seconds_memory_peak_gb_unscheduled_pods.png
-python3 utils/repro/make_paper_plots.py --results results-repro/big-all --out figures-out
+JUNE=results-repro/big-all
+OCT=results-repro/big-spoofing-20261022,results-repro/big-spoofing-20261024
+python3 utils/repro/make_paper_plots.py --out figures-out --session june=$JUNE --session oct=$OCT
+python3 utils/repro/make_benchmark_bars.py \
+    --out figures-out/bars_run_time_total_cpu_seconds_memory_peak_gb_unscheduled_pods.png \
+    --session june=results-repro/benchmark-all --session oct=results-repro/benchmark-spoofing-20261022
+python3 utils/repro/paper_tables.py --out tables-out --session june=$JUNE --session oct=$OCT \
+    --phases results-repro/big-spoofing-20261022/harness.log@opensim,kwok,kube-sched \
+    --phases results-repro/big-spoofing-20261024/harness.log@simkube,kubemark,kcs
 ```
 
-Requires `matplotlib`.
+`paper_tables.py` writes `variability.tex`, `scaling.tex`, `phases.tex` and
+`summary.txt` (the numbers quoted in the text). `sessions.py` is the shared
+loader. Requires `matplotlib`.
 
 ## Host requirements for the big sweep
 
