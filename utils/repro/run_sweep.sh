@@ -99,6 +99,10 @@ if [[ -f modules/kcs/kcs-yamlsim ]]; then
   kcs_mount=(-v "$PWD/modules/kcs/kcs-yamlsim":/usr/local/bin/kcs-yamlsim:ro)
 fi
 
+# The full output is large (dockerd logs); keep only the harness lines, which
+# utils/repro/run_phases.py turns into per-phase run times.
+full_log="$OUT_ABS/.run.log"
+set +e
 docker run --rm --privileged --cgroupns host \
   "${dns_flags[@]}" \
   -e CONTAINERIZED=true \
@@ -112,7 +116,13 @@ docker run --rm --privileged --cgroupns host \
   "${kcs_mount[@]}" \
   -v "$OUT_ABS":/results \
   "$IMAGE" \
-  -e "/data/${DATASET}" -n "$RUNS" -s 0 -o /results -t "$MEM_THRESHOLD" -x "$MAX_TIME"
+  -e "/data/${DATASET}" -n "$RUNS" -s 0 -o /results -t "$MEM_THRESHOLD" -x "$MAX_TIME" \
+  2>&1 | tee "$full_log"
+rc=${PIPESTATUS[0]}
+set -e
+grep -E '^\[[0-9-]+ [0-9:]+\] \[(INFO|ERROR|WARN)' "$full_log" > "$OUT_ABS/harness.log" || true
+rm -f "$full_log"
+(( rc == 0 )) || { echo "Runner exited with status $rc" >&2; exit "$rc"; }
 
 echo "==> Done. Results in $OUT:"
 ls -la "$OUT"

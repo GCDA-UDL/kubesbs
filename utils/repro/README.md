@@ -8,6 +8,7 @@ repository root.
 |---|---|
 | [`run_sweep.sh`](run_sweep.sh) | Runs a dataset over a set of simulators in the runner container and writes `<sim>.csv`, `SIM_MODULES` and `RUN_INFO` (host, commit, image) to the output folder. |
 | [`compare_runs.py`](compare_runs.py) | Compares a new run with a reference folder, per simulator and node count. |
+| [`run_phases.py`](run_phases.py) | Splits each run's run time into setup, workload and end-of-run check, from the `harness.log` that `run_sweep.sh` saves next to the CSVs. |
 | [`make_benchmark_bars.py`](make_benchmark_bars.py) | Bar figure of the small-scale benchmark (6 simulators + vanilla). |
 | [`make_paper_plots.py`](make_paper_plots.py) | Line plots of the big sweep (6 simulators, 100–1200 nodes). |
 
@@ -28,7 +29,14 @@ runner image by digest (`thesmuks/k8s-sims@sha256:162f8e96…`, the image of eve
 published run) and records its image ID in `RUN_INFO`.
 
 For Kubemark at scale, most of the measured run time is the harness checking the
-events of each pending pod (CHANGELOG, "Known issue"); report it by phase.
+events of each pending pod (CHANGELOG, "Known issue"); report it by phase:
+
+```bash
+python3 utils/repro/run_phases.py results-repro/big-spoofing-20261024/harness.log
+```
+
+The October runs keep their `harness.log`; the June runs (`big-all`,
+`benchmark-all`) have no log, so they cannot be split.
 
 ## Re-run the benchmark and compare
 
