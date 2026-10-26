@@ -1,0 +1,10 @@
+date=2026-10-22T23:06:14+02:00
+host=spoofing.udl.cat
+commit=bd1bba0036ab2dbdc9feb394e97986c859663731
+image=thesmuks/k8s-sims:latest
+image_id=sha256:49601a9c8550dd83012a730d2acef735151dce05b1062833f35e81179dbe7adf
+dataset=big
+modules=opensim kwok kube-sched simkube kubemark kcs
+runs=3
+cpus=40
+mem_kb=131125604

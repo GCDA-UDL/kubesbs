@@ -27,6 +27,10 @@ First release under the **KubeSBS** name. The repository URL is unchanged
 - `results-repro/benchmark-spoofing-20261022/`: pre-release re-run of that benchmark
   with `utils/repro/run_sweep.sh` on the same server and runner image; it matches
   the reference (see `utils/repro/README.md` and `COMPARE.txt` in that folder).
+- `results-repro/big-spoofing-20261022/` + `big-spoofing-20261024/`: re-run of the
+  big sweep (6 simulators, 216 runs) on the same server; it matches `big-all`
+  (`NOTES.md` and `COMPARE-big.txt`). The SimKube and Kubemark rows of the first
+  part are kept under `discarded/`: they broke during a DNS outage.
 - `utils/trace-convert/download_traces.sh`: fetches the Alibaba, Borg and Azure
   traces (and Philly with `--philly`).
 - `utils/trace-convert/philly2base.py`: Microsoft Philly GPU-trace converter
