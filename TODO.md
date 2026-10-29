@@ -41,6 +41,30 @@
       `nvidia.com/gpu`; current sims schedule by cpu/memory, so GPU placement is
       untested. Feeds the GPU-scheduling-fidelity sub-study of paper #3 (C1).
 
+### Fidelity study (real cluster) — optional
+
+The paper uses the runs of 2026-10-29 (`results/fidelity-prelim-2026-10-29/SUMMARY.md`):
+real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
+
+- [ ] *(optional)* **Real cluster beyond 100 nodes on one host.** The measured cost of the
+      k3d cluster (spoofing-gcd, cgroup v2) grows as ≈ 0.16·N + 0.00065·N² GB, i.e. ≈ 241 GB
+      at 500 nodes, more than spoofing02's 187 GB; a 500-node attempt hung spoofing02 on
+      2026-10-29. A lean configuration should remove most of the N² term: flannel off
+      (`--flannel-backend=none` + a local `bridge` CNI per node), `--disable-network-policy`,
+      `--disable-kube-proxy` (pods are `pause`, no Services). Check at 100 nodes that the
+      placement stays within the real-vs-real noise before scaling, and abort on load /
+      PSI as well as on `MemAvailable`.
+- [ ] *(optional)* **Latency without host saturation.** At 60–100 nodes the emulated cluster
+      saturates its host (load 206–308 on 40 threads on spoofing-gcd), so the real latency
+      there is an upper bound. Either pin the server container to dedicated cores
+      (`docker update --cpuset-cpus`) or run the 100-node point on GCP with one VM per node
+      (`infra/gcp/run-fidelity.sh start 100 3`, never tested against GCP yet; user-paid).
+- [ ] *(optional)* **Fidelity of other simulators** (kube-scheduler-simulator, SimKube,
+      Kubemark, OpenSimulator) with `POD_RECORDS_DIR`; opensim, kcs and k8ssim need
+      adapters that write `pods.csv`.
+- [ ] Archive `results/fidelity-prelim-2026-10-29/` (git-ignored) with the reproduction
+      package / the CORA upload above.
+
 ## Done (for reference)
 
 - [x] ~~Software DOI on Zenodo (concept `10.5281/zenodo.20694295`)~~ — **record
