@@ -3,6 +3,38 @@
 All notable changes to KubeSBS (formerly the GCDA fork of k8s-sims). The original
 toolkit by Matias Medina (TFG UdL 2025) is tagged **`v0.1`** and is the baseline below.
 
+## [v0.4.0] — Fidelity study (2026-10-29)
+
+### Added
+
+- `modules/real`: a real Kubernetes cluster as a KubeRun module. `PROVIDER=k3d` (default)
+  runs one k3s v1.29 node per dataset node as k3d containers on the host, named after
+  the trace node, with its allocatable set to the node's capacity through the kubelet's
+  `system-reserved` (`utils/real_k3d.py` renders the config and verifies the live
+  allocatable before every run). `PROVIDER=gcp` creates one Compute Engine VM per node
+  (`infra/gcp/`, not yet run against GCP). `REAL_PLATFORM` labels the runs of each host.
+- `utils/scale_base.py`: scales the base trace (CPU / 200, memory / 512 by default) so
+  that a real node fits on one host.
+- Per-pod records for every tool with a Kubernetes API: set `POD_RECORDS_DIR` and
+  KubeRun writes `pods-<tool>-<platform>-<nodes>-<rep>.csv` (node, creation time from
+  a watcher with ms resolution, `Scheduled` event time) — `utils/collect_pods.py`,
+  `utils/watch_pods.py`.
+- `utils/fidelity.py`: pairwise comparison of runs (agreement after matching identical
+  nodes, Wasserstein-1 of the per-node occupancy, unscheduled pods, latency).
+- `utils/repro/make_fidelity_dataset.sh` and `utils/repro/fidelity_report.py`: the
+  dataset, table and figure of the paper's fidelity section.
+- `results-repro/fidelity-20261029/`: 36 runs (real cluster on two servers + KWOK,
+  10–100 nodes, 3 runs each) with `NOTES.md` and `DATASET.sha256`.
+
+### Changed
+
+- `modules/kwok`: `kwokctl` 0.7.0 has no `--kube-version`; the module documents that it
+  reads `KWOK_KUBE_VERSION` from the environment.
+
+### Notes
+
+- v0.3.0 is described below but was never tagged; v0.4.0 is the first tag after v0.2.4.
+
 ## [v0.3.0] — KubeSBS (2026-10-22)
 
 First release under the **KubeSBS** name. The repository was renamed from

@@ -1,0 +1,494 @@
+  _  __     _          _____             
+ | |/ /    | |        |  __ \            
+ | ' /_   _| |__   ___| |__) |   _ _ __  
+ |  <| | | | '_ \ / _ \  _  / | | | '_ \ 
+ | . \ |_| | |_) |  __/ | \ \ |_| | | | |
+ |_|\_\__,_|_.__/ \___|_|  \_\__,_|_| |_|
+------------------------------------------
+[2026-10-29 19:28:46] [INFO] Received arguments -m real -e data/fidelity/pilot60 -n 3 -x 1800 -o /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/real-60.csv
+[2026-10-29 19:28:46] [INFO] real: real module loaded (provider k3d)
+[2026-10-29 19:28:46] [INFO] real: Simulation started with mode: real
+[2026-10-29 19:28:46] [INFO] real: Cluster: kube-bench
+[2026-10-29 19:28:46] [INFO] real: Runs per experiment: 3
+[2026-10-29 19:28:46] [INFO] real: Results file: /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/real-60.csv
+[2026-10-29 19:28:46] [INFO] real: Node file: /home/vitor.luiz/kubesbs-fidelity/data/fidelity/pilot60/nodes-60.yaml
+[2026-10-29 19:28:46] [INFO] real: Pod file: /home/vitor.luiz/kubesbs-fidelity/data/fidelity/pilot60/pods-60.yaml
+[2026-10-29 19:28:46] [INFO] real: Starting run 1 for 60 nodes...
+[2026-10-29 19:28:46] [INFO] real: Starting cluster setup...
+k3d config for 60 agents (host 40000m, 131125604Ki) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml
+[2026-10-29 19:28:46] [INFO] real: Creating k3d cluster kube-bench from /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml...
+[36mINFO[0m[0000] Using config file /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml (k3d.io/v1alpha5#simple) 
+[36mINFO[0m[0000] Prep: Network                                
+[36mINFO[0m[0000] Created network 'k3d-kube-bench'             
+[36mINFO[0m[0000] Created image volume k3d-kube-bench-images   
+[36mINFO[0m[0000] Starting new tools node...                   
+[36mINFO[0m[0000] Starting node 'k3d-kube-bench-tools'         
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0001] Using the k3d-tools node to gather environment information 
+[36mINFO[0m[0001] HostIP: using network gateway 172.30.0.1 address 
+[36mINFO[0m[0001] Starting cluster 'kube-bench'                
+[36mINFO[0m[0001] Starting servers...                          
+[36mINFO[0m[0001] Starting node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0007] Starting agents...                           
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0007] Starting node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0037] All helpers already running.                 
+[36mINFO[0m[0037] Injecting records for hostAliases (incl. host.k3d.internal) and for 61 network members into CoreDNS configmap... 
+[36mINFO[0m[0039] Cluster 'kube-bench' created successfully!   
+[36mINFO[0m[0039] You can now use it like this:                
+kubectl cluster-info
+[2026-10-29 19:29:26] [INFO] real: Preloading registry.k8s.io/pause:3.9 on every node...
+Switched to context "k3d-kube-bench".
+verified 60 nodes: OK
+[2026-10-29 19:29:27] [INFO] real: Cluster setup successful
+[2026-10-29 19:29:27] [INFO] real: Starting container tracking...
+namespace/paib-gpu created
+
+[2026-10-29 19:30:38] [INFO] real: Waiting for the count of pending pods to stabilize...
+[2026-10-29 19:30:38] [INFO] real: Current pending count: 105, Previous: 106
+[2026-10-29 19:30:40] [INFO] real: Current pending count: 99, Previous: 105
+[2026-10-29 19:30:41] [INFO] real: Current pending count: 92, Previous: 99
+[2026-10-29 19:30:42] [INFO] real: Current pending count: 88, Previous: 92
+[2026-10-29 19:30:43] [INFO] real: Current pending count: 74, Previous: 88
+[2026-10-29 19:30:45] [INFO] real: Current pending count: 57, Previous: 74
+[2026-10-29 19:30:46] [INFO] real: Current pending count: 32, Previous: 57
+[2026-10-29 19:30:47] [INFO] real: Current pending count: 10, Previous: 32
+[2026-10-29 19:30:48] [INFO] real: Current pending count: 10, Previous: 10
+
+[2026-10-29 19:30:49] [INFO] real: Waiting for pods to be scheduled...
+[2026-10-29 19:30:50] [INFO] real: All pending pods can not be scheduled.
+670 pods (660 bound, 660 with Scheduled events) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/pods-real-k3d-gcd-60-1.csv
+[2026-10-29 19:31:15] [INFO] real: Starting run 2 for 60 nodes...
+[2026-10-29 19:31:15] [INFO] real: Starting cluster setup...
+k3d config for 60 agents (host 40000m, 131125604Ki) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml
+[2026-10-29 19:31:15] [INFO] real: Creating k3d cluster kube-bench from /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml...
+[36mINFO[0m[0000] Using config file /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml (k3d.io/v1alpha5#simple) 
+[36mINFO[0m[0000] Prep: Network                                
+[36mINFO[0m[0000] Created network 'k3d-kube-bench'             
+[36mINFO[0m[0000] Created image volume k3d-kube-bench-images   
+[36mINFO[0m[0000] Starting new tools node...                   
+[36mINFO[0m[0000] Starting node 'k3d-kube-bench-tools'         
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0001] Using the k3d-tools node to gather environment information 
+[36mINFO[0m[0001] HostIP: using network gateway 172.31.0.1 address 
+[36mINFO[0m[0001] Starting cluster 'kube-bench'                
+[36mINFO[0m[0001] Starting servers...                          
+[36mINFO[0m[0001] Starting node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0007] Starting agents...                           
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0008] Starting node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0038] All helpers already running.                 
+[36mINFO[0m[0038] Injecting records for hostAliases (incl. host.k3d.internal) and for 61 network members into CoreDNS configmap... 
+[36mINFO[0m[0040] Cluster 'kube-bench' created successfully!   
+[36mINFO[0m[0040] You can now use it like this:                
+kubectl cluster-info
+[2026-10-29 19:31:56] [INFO] real: Preloading registry.k8s.io/pause:3.9 on every node...
+Switched to context "k3d-kube-bench".
+verified 60 nodes: OK
+[2026-10-29 19:31:58] [INFO] real: Cluster setup successful
+[2026-10-29 19:31:58] [INFO] real: Starting container tracking...
+namespace/paib-gpu created
+
+[2026-10-29 19:33:08] [INFO] real: Waiting for the count of pending pods to stabilize...
+[2026-10-29 19:33:09] [INFO] real: Current pending count: 51, Previous: 58
+[2026-10-29 19:33:10] [INFO] real: Current pending count: 28, Previous: 51
+[2026-10-29 19:33:11] [INFO] real: Current pending count: 10, Previous: 28
+[2026-10-29 19:33:12] [INFO] real: Current pending count: 10, Previous: 10
+
+[2026-10-29 19:33:13] [INFO] real: Waiting for pods to be scheduled...
+[2026-10-29 19:33:14] [INFO] real: All pending pods can not be scheduled.
+670 pods (660 bound, 660 with Scheduled events) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/pods-real-k3d-gcd-60-2.csv
+[2026-10-29 19:33:38] [INFO] real: Starting run 3 for 60 nodes...
+[2026-10-29 19:33:38] [INFO] real: Starting cluster setup...
+k3d config for 60 agents (host 40000m, 131125604Ki) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml
+[2026-10-29 19:33:38] [INFO] real: Creating k3d cluster kube-bench from /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml...
+[36mINFO[0m[0000] Using config file /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/work/k3d-nodes-60.yaml (k3d.io/v1alpha5#simple) 
+[36mINFO[0m[0000] Prep: Network                                
+[36mINFO[0m[0000] Created network 'k3d-kube-bench'             
+[36mINFO[0m[0000] Created image volume k3d-kube-bench-images   
+[36mINFO[0m[0000] Starting new tools node...                   
+[36mINFO[0m[0000] Starting node 'k3d-kube-bench-tools'         
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0001] Creating node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0001] Using the k3d-tools node to gather environment information 
+[36mINFO[0m[0001] HostIP: using network gateway 192.168.0.1 address 
+[36mINFO[0m[0001] Starting cluster 'kube-bench'                
+[36mINFO[0m[0001] Starting servers...                          
+[36mINFO[0m[0001] Starting node 'k3d-kube-bench-server-0'      
+[36mINFO[0m[0010] Starting agents...                           
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-10'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-0'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-47'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-28'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-11'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-41'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-55'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-14'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-44'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-42'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-36'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-34'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-30'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-15'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-26'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-2'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-56'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-7'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-6'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-13'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-8'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-43'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-38'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-3'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-35'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-32'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-24'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-23'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-19'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-54'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-49'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-31'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-37'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-51'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-20'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-27'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-48'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-52'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-17'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-39'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-1'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-29'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-58'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-45'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-25'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-9'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-22'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-33'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-40'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-12'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-59'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-5'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-21'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-18'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-53'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-4'       
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-46'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-50'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-57'      
+[36mINFO[0m[0010] Starting node 'k3d-kube-bench-agent-16'      
+[36mINFO[0m[0040] All helpers already running.                 
+[36mINFO[0m[0040] Injecting records for hostAliases (incl. host.k3d.internal) and for 61 network members into CoreDNS configmap... 
+[36mINFO[0m[0042] Cluster 'kube-bench' created successfully!   
+[36mINFO[0m[0042] You can now use it like this:                
+kubectl cluster-info
+[2026-10-29 19:34:21] [INFO] real: Preloading registry.k8s.io/pause:3.9 on every node...
+Switched to context "k3d-kube-bench".
+verified 60 nodes: OK
+[2026-10-29 19:34:23] [INFO] real: Cluster setup successful
+[2026-10-29 19:34:23] [INFO] real: Starting container tracking...
+namespace/paib-gpu created
+
+[2026-10-29 19:35:32] [INFO] real: Waiting for the count of pending pods to stabilize...
+[2026-10-29 19:35:33] [INFO] real: Current pending count: 42, Previous: 47
+[2026-10-29 19:35:34] [INFO] real: Current pending count: 10, Previous: 42
+[2026-10-29 19:35:35] [INFO] real: Current pending count: 10, Previous: 10
+
+[2026-10-29 19:35:36] [INFO] real: Waiting for pods to be scheduled...
+[2026-10-29 19:35:37] [INFO] real: All pending pods can not be scheduled.
+670 pods (660 bound, 660 with Scheduled events) -> /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/pods-real-k3d-gcd-60-3.csv
+[2026-10-29 19:36:02] [INFO] real: All experiments completed. Results written to: /home/vitor.luiz/kubesbs-fidelity/results/matrix-gcd/real-60.csv

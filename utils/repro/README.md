@@ -12,6 +12,8 @@ repository root.
 | [`make_benchmark_bars.py`](make_benchmark_bars.py) | Bar figure of the small-scale benchmark (6 simulators + vanilla), mean and min–max over the given sessions. |
 | [`make_paper_plots.py`](make_paper_plots.py) | Line plots of the big sweep (6 simulators, 100–1200 nodes), mean and min–max band. |
 | [`paper_tables.py`](paper_tables.py) | LaTeX tables of the paper: variability within and between sessions, cost-scaling exponents, run-time phases. |
+| [`make_fidelity_dataset.sh`](make_fidelity_dataset.sh) | Builds the scaled dataset of the fidelity study (`data/fidelity`), byte-identical to the one used (`DATASET.sha256`). |
+| [`fidelity_report.py`](fidelity_report.py) | Fidelity table and latency figure of the paper (KWOK vs. a real k3s cluster on two hosts), from the per-pod records. |
 
 ## Reference results
 
@@ -70,6 +72,21 @@ python3 utils/repro/paper_tables.py --out tables-out --session june=$JUNE --sess
 `paper_tables.py` writes `variability.tex`, `scaling.tex`, `phases.tex` and
 `summary.txt` (the numbers quoted in the text). `sessions.py` is the shared
 loader. Requires `matplotlib`.
+
+The fidelity section (36 runs in `results-repro/fidelity-20261029`, see its
+`NOTES.md`) needs `scipy` and `PyYAML` as well:
+
+```bash
+bash utils/repro/make_fidelity_dataset.sh
+F=results-repro/fidelity-20261029
+python3 utils/repro/fidelity_report.py --out fidelity-out --nodes-dir data/fidelity/vanilla \
+    --real "4210R server=$F/spoofing-gcd/pods-real-*.csv" \
+    --real "W-3245 server=$F/spoofing02/pods-real-*.csv" \
+    --sim KWOK="$F/spoofing02/pods-kwok-*.csv"
+```
+
+It writes `fidelity.tex`, `fidelity_latency_vs_node_count.png`,
+`fidelity-summary.txt` and `fidelity-pairs.csv`.
 
 ## Host requirements for the big sweep
 

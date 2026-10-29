@@ -269,3 +269,53 @@ def test_pod_rows_uses_watch_times_when_available():
     assert rows["p0"]["t_create"] == "0.000000" and rows["p0"]["t_create_source"] == "watch"
     assert rows["p1"]["t_create"] == "0.250000"
     assert rows["p0"]["t_scheduled"] == "0.800000"   # condition time (17:00:01) - t0
+
+
+# --- utils/repro/fidelity_report.py -------------------------------------------
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "utils", "repro"))
+import fidelity_report  # noqa: E402
+
+
+def test_group_classifies_pairs_by_platform():
+    a = ("real", "host-a", 10, 1)
+    assert fidelity_report.group(a, ("real", "host-a", 10, 2)) == "real-same-host"
+    assert fidelity_report.group(a, ("real", "host-b", 10, 1)) == "real-across-hosts"
+    assert fidelity_report.group(("sim", "KWOK", 10, 1), a) == "KWOK-vs-real"
+    assert fidelity_report.group(("sim", "KWOK", 10, 1), ("sim", "KWOK", 10, 2)) == "KWOK-same-tool"
+    assert fidelity_report.group(("sim", "KWOK", 10, 1), ("sim", "SimX", 10, 1)) is None
+
+
+def _pods_csv(path, tool, platform, rep, placement):
+    rows = [{c: "" for c in collect_pods.COLUMNS} | {
+        "tool": tool, "platform": platform, "scale": "2", "rep": str(rep), "workload": "t",
+        "pod": pod, "node": node, "t_create": "0.0", "t_create_source": "watch",
+        "t_scheduled": "0.004" if node else "", "t_scheduled_source": "event" if node else "",
+        "status": "Running" if node else "Pending", "cpu_m": "100", "mem_kib": "1024"}
+        for pod, node in placement.items()]
+    import csv
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=collect_pods.COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+
+
+def test_report_end_to_end(tmp_path):
+    nodes = tmp_path / "nodes-2.yaml"
+    nodes.write_text("\n---\n".join(
+        f"apiVersion: v1\nkind: Node\nmetadata:\n  name: {n}\nstatus:\n  allocatable:\n"
+        f"    cpu: 200m\n    memory: 4096Ki\n    pods: '250'\n" for n in ("n1", "n2")), encoding="utf-8")
+    _pods_csv(tmp_path / "pods-real-a-2-1.csv", "real", "k3d", 1, {"p1": "n1", "p2": "n2", "p3": ""})
+    _pods_csv(tmp_path / "pods-real-b-2-1.csv", "real", "k3d-gcd", 1, {"p1": "n2", "p2": "n1", "p3": ""})
+    _pods_csv(tmp_path / "pods-kwok-2-1.csv", "kwok", "sim", 1, {"p1": "n1", "p2": "n2", "p3": ""})
+    out = tmp_path / "out"
+    fidelity_report.main(["--out", str(out), "--nodes-dir", str(tmp_path),
+                          "--real", f"A={tmp_path}/pods-real-a-*.csv",
+                          "--real", f"B={tmp_path}/pods-real-b-*.csv",
+                          "--sim", f"KWOK={tmp_path}/pods-kwok-*.csv"])
+    for f in ("fidelity.tex", "fidelity_latency_vs_node_count.png", "fidelity-summary.txt",
+              "fidelity-pairs.csv"):
+        assert (out / f).exists()
+    table = (out / "fidelity.tex").read_text(encoding="utf-8")
+    # Identical nodes swapped between runs still agree fully once matched.
+    assert "2 & 3 & 1 & 1 & " in table and "100.0" in table

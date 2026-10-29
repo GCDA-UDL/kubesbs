@@ -38,6 +38,15 @@ python utils/kube-gen.py -o data/medium -c 100 -i 25
 python utils/kube-gen.py -o data/big -c 400 -i 50
 ```
 
+The fidelity dataset (real k3s cluster, paper Section "Fidelity Against a Real
+Cluster") is the base trace scaled down and cut at 10, 30, 60 and 100 nodes; it is
+not committed and regenerates byte for byte:
+
+```bash
+bash utils/repro/make_fidelity_dataset.sh     # -> data/fidelity/{base,vanilla}
+(cd data/fidelity && sha256sum -c ../../results-repro/fidelity-20261029/DATASET.sha256)
+```
+
 For simulator-specific formats, add the relevant flags such as `--kubemark`, `--simkube`, `--open_sim`, or `--k8ssim` (K8sSim Volcano) and record the exact command in the checkpoint log. The `kcs` simulator reuses the standard `vanilla` datasets directly (no flag).
 
 To generate from Google Borg, Azure or Philly traces instead of Alibaba:

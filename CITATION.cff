@@ -44,8 +44,8 @@ license: Apache-2.0
 repository-code: "https://github.com/GCDA-UDL/kubesbs"
 # DOI: the earlier Zenodo record (k8s-sims) was deleted; v0.3.0 is the first
 # KubeSBS release, archived on Zenodo under a new DOI (concept DOI to be added here).
-version: 0.3.0
-date-released: "2026-10-22"
+version: 0.4.0
+date-released: "2026-10-29"
 keywords:
   - KubeSBS
   - Kubernetes

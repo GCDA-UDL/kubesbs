@@ -10,7 +10,7 @@
     { "name": "da Silva, Vitor", "orcid": "0000-0002-3296-2752", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" }
   ],
   "license": "Apache-2.0",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "keywords": [
     "KubeSBS",
     "Kubernetes",
