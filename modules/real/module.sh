@@ -16,7 +16,8 @@ readonly REAL_MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly REAL_ROOT_DIR="$(cd "${REAL_MODULE_DIR}/../.." && pwd)"
 
 PROVIDER="${PROVIDER:-k3d}"
-PLATFORM="$PROVIDER"
+# Label of the runs in pods.csv; set REAL_PLATFORM to tell hosts apart (k3d-s02, ...).
+PLATFORM="${REAL_PLATFORM:-$PROVIDER}"
 CLUSTER_NAME="kube-bench"
 NAMESPACE="paib-gpu"
 CONTAINERS_TO_WATCH="k3d-${CLUSTER_NAME}"
