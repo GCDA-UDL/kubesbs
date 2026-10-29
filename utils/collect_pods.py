@@ -15,7 +15,8 @@ Times are seconds relative to the first pod creation of the run (t = 0).
   microsecond resolution); if there is none, the PodScheduled condition (1 s).
   Column t_scheduled_source says which one was used.
 - t_start: the container's running startedAt (real clusters only; empty if the
-  tool does not run containers).
+  tool does not run containers). It has 1 s resolution, so it can precede a
+  millisecond t_create: use it for coarse start-up delays only.
 
 Usage:
   python3 utils/collect_pods.py --namespace paib-gpu --out pods.csv \
