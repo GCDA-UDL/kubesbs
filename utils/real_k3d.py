@@ -103,7 +103,7 @@ def render(nodes: list[dict], name: str, image: str, host_cpu_m: int, host_mem_k
         "agents": len(nodes),
         "image": image,
         "options": {
-            "k3d": {"wait": True, "timeout": "900s", "disableLoadbalancer": True},
+            "k3d": {"wait": True, "timeout": "1800s", "disableLoadbalancer": True},
             "k3s": {"extraArgs": args},
             "kubeconfig": {"updateDefaultKubeconfig": True, "switchCurrentContext": True},
         },
