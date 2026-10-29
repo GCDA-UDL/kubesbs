@@ -15,6 +15,7 @@ Usage:
       [--name kube-bench] [--image rancher/k3s:v1.29.0-k3s1] \
       [--host-cpu-m N] [--host-mem-ki N]     (default: read from this host)
   python3 utils/real_k3d.py verify --nodes nodes-10.yaml [--context k3d-kube-bench]
+  python3 utils/real_k3d.py targets --nodes nodes-100.yaml   (input of infra/gcp)
 """
 from __future__ import annotations
 
@@ -69,6 +70,8 @@ def target(node: dict) -> tuple[int, int, int]:
 def render(nodes: list[dict], name: str, image: str, host_cpu_m: int, host_mem_ki: int) -> dict:
     eviction_ki = EVICTION_MEM_MI * 1024
     args = [
+        # Embedded etcd, as in a production control plane (k3s defaults to SQLite).
+        {"arg": "--cluster-init", "nodeFilters": ["server:*"]},
         {"arg": "--disable=traefik,servicelb,metrics-server,local-storage,coredns",
          "nodeFilters": ["server:*"]},
         # Keep the trace's pods off the control-plane node.
@@ -144,9 +147,15 @@ def main(argv=None) -> int:
     v = sub.add_parser("verify")
     v.add_argument("--nodes", required=True)
     v.add_argument("--context")
+    t = sub.add_parser("targets", help="one line per node: name cpu_m mem_ki pods (cloud VMs)")
+    t.add_argument("--nodes", required=True)
     args = ap.parse_args(argv)
 
     nodes = load_nodes(args.nodes)
+    if args.cmd == "targets":
+        for node in nodes:
+            print(node["metadata"]["name"], *target(node))
+        return 0
     if args.cmd == "render":
         cpu_m, mem_ki = host_capacity() if args.host_cpu_m is None else (args.host_cpu_m, args.host_mem_ki)
         config = render(nodes, args.name, args.image, cpu_m, mem_ki)
