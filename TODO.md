@@ -31,8 +31,9 @@
 - [ ] **vanilla pre-check:** every vanilla run first tries `data/test/vanilla/cluster-1.yaml`,
       which does not exist, and logs "Cluster setup failed" (results go to `/tmp`, the
       benchmark rows are unaffected). Add the file or skip the pre-check.
-- [ ] **Zenodo DOI for KubeSBS v0.3.0:** enable the repository in Zenodo's GitHub
-      integration, publish the v0.3.0 GitHub release, then add the concept DOI to
+- [ ] **Zenodo DOI for KubeSBS** (v0.3.0 was never tagged; the first tag after v0.2.4 is
+      v0.4.0): enable the repository in Zenodo's GitHub integration, publish the v0.4.0
+      GitHub release, then add the concept DOI to
       `CITATION.cff`, `README.md` and the survey's `k8s-sims` bib entry.
 - [ ] **Philly converter — real-trace + GPU run:** `philly2base.py` is validated on
       the synthetic sample only (5 jobs → 2 GPU nodes, 16 GPUs). Download the real
@@ -62,8 +63,21 @@ real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
 - [ ] *(optional)* **Fidelity of other simulators** (kube-scheduler-simulator, SimKube,
       Kubemark, OpenSimulator) with `POD_RECORDS_DIR`; opensim, kcs and k8ssim need
       adapters that write `pods.csv`.
-- [ ] Archive `results/fidelity-prelim-2026-10-29/` (git-ignored) with the reproduction
-      package / the CORA upload above.
+- [x] Archive the fidelity results: `results-repro/fidelity-20261029/` (v0.4.0) and the
+      reproduction package `GCDA-UDL/repro-kubesbs` v0.1.0 (2026-10-29), where Docker
+      regenerates every paper table byte for byte.
+
+### Paper submission (SIGMETRICS 2027, abstract 4 Jan, paper 11 Jan 2027)
+
+- [ ] **Anonymous artefact** for the double-blind review: anonymous.4open.science copy of
+      `GCDA-UDL/repro-kubesbs` (needs the maintainer's GitHub login there). Terms to hide
+      include the author names, SEMBAC, Lleida, UdL, GCDA/GCD, `spoofing` (host and
+      folder names), the e-mail and the funder. Put its URL in `\artefacturl` (review)
+      and in the `anonartifact` bib entry of the paper.
+- [ ] At submission: tag `repro-kubesbs` **v1.0.0** and the paper repo **`sub1`**.
+- [ ] Camera-ready: create the Zenodo community `gcd-udl` (does not exist yet), enable
+      Zenodo for `repro-kubesbs`, publish the release, and add the concept DOI to the
+      paper's `kubesbsartifact` entry and to the README badge.
 
 ## Done (for reference)
 
