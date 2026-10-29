@@ -221,3 +221,51 @@ def test_compare_rejects_runs_with_different_pods():
 def test_quantile_interpolates():
     assert fidelity.quantile([1.0, 2.0, 3.0, 4.0], 0.5) == pytest.approx(2.5)
     assert fidelity.quantile([], 0.5) is None
+
+
+def test_agreement_equiv_ignores_swaps_of_identical_nodes():
+    a = [_row("p0", "n0"), _row("p1", "n0"), _row("p2", "n1")]
+    b = [_row("p0", "n1"), _row("p1", "n1"), _row("p2", "n0")]   # n0 <-> n1 relabelled
+    m = fidelity.compare(a, b, CAPACITY)
+    assert m["agreement"] == "0.000000" and m["agreement_equiv"] == "1.000000"
+
+
+def test_agreement_equiv_does_not_match_nodes_of_different_size():
+    cap = {"n0": (100.0, 1000.0), "n1": (200.0, 1000.0)}
+    a = [_row("p0", "n0")]
+    b = [_row("p0", "n1")]
+    assert fidelity.compare(a, b, cap)["agreement_equiv"] == "0.000000"
+
+
+# ---------------------------------------------------------------------------
+# watch_pods
+# ---------------------------------------------------------------------------
+
+import json as _json  # noqa: E402
+
+import watch_pods  # noqa: E402
+
+
+def _ev(kind, name, node=None):
+    obj = {"metadata": {"name": name}, "spec": {"nodeName": node} if node else {}}
+    return _json.dumps({"type": kind, "object": obj})
+
+
+def test_follow_stamps_first_appearance_and_first_binding():
+    ticks = iter([10.0, 10.5, 11.0, 12.0, 13.0])
+    lines = [_ev("ADDED", "p0"), _ev("ADDED", "p1"), _ev("MODIFIED", "p0", "n0"),
+             _ev("MODIFIED", "p0", "n0"), "not json"]
+    seen = watch_pods.follow(lines, clock=lambda: next(ticks))
+    assert seen["p0"] == [10.0, 11.0]
+    assert seen["p1"] == [10.5, None]
+
+
+def test_pod_rows_uses_watch_times_when_available():
+    pods = {"items": [_pod("p0", "n0", "2026-10-29T17:00:00Z", "2026-10-29T17:00:01Z"),
+                      _pod("p1", "n1", "2026-10-29T17:00:00Z", "2026-10-29T17:00:01Z")]}
+    base = datetime(2026, 10, 29, 17, 0, 0, tzinfo=timezone.utc).timestamp()
+    watch = {"p0": base + 0.200, "p1": base + 0.450}
+    rows = {r["pod"]: r for r in collect_pods.pod_rows(pods, {"items": []}, {}, watch)}
+    assert rows["p0"]["t_create"] == "0.000000" and rows["p0"]["t_create_source"] == "watch"
+    assert rows["p1"]["t_create"] == "0.250000"
+    assert rows["p0"]["t_scheduled"] == "0.800000"   # condition time (17:00:01) - t0

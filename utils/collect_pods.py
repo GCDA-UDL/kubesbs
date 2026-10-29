@@ -7,7 +7,10 @@ kube-scheduler-simulator, SimKube, Kubemark, vanilla and the real clusters), so
 the fidelity comparison reads the same format for all of them.
 
 Times are seconds relative to the first pod creation of the run (t = 0).
-- t_create: metadata.creationTimestamp (1 s resolution).
+- t_create: when the pod appeared in the API, from the watcher's log
+  (utils/watch_pods.py, --watch; millisecond resolution, local clock); without
+  it, metadata.creationTimestamp (1 s resolution). Column t_create_source says
+  which one was used.
 - t_scheduled: eventTime of the scheduler's `Scheduled` event (events.k8s.io/v1,
   microsecond resolution); if there is none, the PodScheduled condition (1 s).
   Column t_scheduled_source says which one was used.
@@ -17,7 +20,7 @@ Times are seconds relative to the first pod creation of the run (t = 0).
 Usage:
   python3 utils/collect_pods.py --namespace paib-gpu --out pods.csv \
       --tool kwok --platform sim --scale 10 --rep 1 --workload alibaba \
-      [--context CTX] [--append]
+      [--watch watch.csv] [--context CTX] [--append]
 """
 from __future__ import annotations
 
@@ -33,7 +36,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from scale_base import cpu_millicores, mem_bytes  # noqa: E402
 
 COLUMNS = ["tool", "platform", "scale", "rep", "workload", "pod", "node",
-           "t_create", "t_scheduled", "t_scheduled_source", "t_start", "status",
+           "t_create", "t_create_source", "t_scheduled", "t_scheduled_source", "t_start", "status",
            "cpu_m", "mem_kib"]
 
 
@@ -73,13 +76,28 @@ def scheduled_events(events: dict) -> dict[str, float]:
     return out
 
 
-def pod_rows(pods: dict, events: dict, meta: dict) -> list[dict]:
+def read_watch(path: str) -> dict[str, float]:
+    """Pod name -> t_added from a watch_pods.py log."""
+    with open(path, newline="", encoding="utf-8") as fh:
+        return {r["pod"]: float(r["t_added"]) for r in csv.DictReader(fh) if r["t_added"]}
+
+
+def pod_rows(pods: dict, events: dict, meta: dict, watch: dict | None = None) -> list[dict]:
     sched = scheduled_events(events)
     items = pods.get("items", [])
-    created = [parse_time(p["metadata"].get("creationTimestamp")) for p in items]
+    watch = watch or {}
+    created, created_src = [], []
+    for p in items:
+        name = p["metadata"]["name"]
+        if name in watch:
+            created.append(watch[name])
+            created_src.append("watch")
+        else:
+            created.append(parse_time(p["metadata"].get("creationTimestamp")))
+            created_src.append("creation")
     t0 = min((c for c in created if c is not None), default=0.0)
     rows = []
-    for pod, t_create in zip(items, created):
+    for pod, t_create, t_create_src in zip(items, created, created_src):
         name = pod["metadata"]["name"]
         status = pod.get("status", {})
         if name in sched:
@@ -99,7 +117,8 @@ def pod_rows(pods: dict, events: dict, meta: dict) -> list[dict]:
             mem += mem_bytes(req.get("memory", 0)) / 1024
         rel = lambda t: "" if t is None else f"{t - t0:.6f}"  # noqa: E731
         rows.append({**meta, "pod": name, "node": pod["spec"].get("nodeName", ""),
-                     "t_create": rel(t_create), "t_scheduled": rel(t_sched),
+                     "t_create": rel(t_create), "t_create_source": t_create_src,
+                     "t_scheduled": rel(t_sched),
                      "t_scheduled_source": source,
                      "t_start": rel(max(starts)) if starts else "",
                      "status": status.get("phase", ""),
@@ -117,6 +136,7 @@ def main(argv=None) -> int:
     ap.add_argument("--scale", required=True)
     ap.add_argument("--rep", required=True)
     ap.add_argument("--workload", default="alibaba")
+    ap.add_argument("--watch", help="watch_pods.py log with millisecond creation times")
     ap.add_argument("--context")
     ap.add_argument("--append", action="store_true", help="append to --out instead of overwriting")
     args = ap.parse_args(argv)
@@ -128,7 +148,8 @@ def main(argv=None) -> int:
         events = kubectl_json(["get", "events", "-n", args.namespace], args.context)
     meta = {"tool": args.tool, "platform": args.platform, "scale": args.scale,
             "rep": args.rep, "workload": args.workload}
-    rows = pod_rows(pods, events, meta)
+    watch = read_watch(args.watch) if args.watch and os.path.exists(args.watch) else None
+    rows = pod_rows(pods, events, meta, watch)
 
     new_file = not (args.append and os.path.exists(args.out))
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)

@@ -322,11 +322,31 @@ collect_pod_events(){
     # POD_RECORDS_DIR is set. Modules without a Kubernetes API override it.
     [[ -n "$POD_RECORDS_DIR" ]] || return 0
     mkdir -p "$POD_RECORDS_DIR"
+    local base="${POD_RECORDS_DIR}/pods-${SIMULATION_MODE}-${PLATFORM:-sim}-${NODE_COUNT}-${CURRENT_RUN}"
     python3 "${SCRIPT_DIR}/utils/collect_pods.py" --namespace "$NAMESPACE" \
-        --out "${POD_RECORDS_DIR}/pods-${SIMULATION_MODE}-${PLATFORM:-sim}-${NODE_COUNT}-${CURRENT_RUN}.csv" \
+        --out "${base}.csv" --watch "${base}.watch.csv" \
         --tool "$SIMULATION_MODE" --platform "${PLATFORM:-sim}" --scale "$NODE_COUNT" \
         --rep "$CURRENT_RUN" --workload "${WORKLOAD:-alibaba}" \
         || log WARN "Per-pod record failed for $NODE_COUNT nodes, run $CURRENT_RUN"
+}
+
+start_pod_watch(){
+    # Millisecond creation times for the per-pod record (utils/watch_pods.py).
+    WATCH_PID=-1
+    [[ -n "$POD_RECORDS_DIR" ]] || return 0
+    mkdir -p "$POD_RECORDS_DIR"
+    python3 "${SCRIPT_DIR}/utils/watch_pods.py" --namespace "$NAMESPACE" \
+        --out "${POD_RECORDS_DIR}/pods-${SIMULATION_MODE}-${PLATFORM:-sim}-${NODE_COUNT}-${CURRENT_RUN}.watch.csv" &
+    WATCH_PID=$!
+    sleep 1   # let the watch open before the pods are created
+}
+
+stop_pod_watch(){
+    if [[ ${WATCH_PID:--1} -ne -1 ]]; then
+        kill -TERM "$WATCH_PID" 2>/dev/null || true
+        wait "$WATCH_PID" 2>/dev/null || true
+        WATCH_PID=-1
+    fi
 }
 
 check_max_time(){
@@ -537,6 +557,9 @@ while IFS= read -r node_file; do
         fi
 
         UNSCHEDULED_PODS=0
+        if [[ $SETUP_OK = "true" ]]; then
+            start_pod_watch
+        fi
         if [[ $SETUP_OK = "true" ]] && deploy_objects "$node_file" "$POD_FILE"; then
             watch_pod_scheduling
         elif [[ $SETUP_OK != "true" ]]; then
@@ -551,6 +574,7 @@ while IFS= read -r node_file; do
         echo "|${UNSCHEDULED_PODS:-0}" >> "$OUT_FILE"
         chmod 666 "$OUT_FILE"
         if [[ $SETUP_OK = "true" ]]; then
+            stop_pod_watch
             collect_pod_events
         fi
         cleanup_cluster

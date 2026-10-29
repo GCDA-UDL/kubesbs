@@ -7,6 +7,9 @@ compared on the same pods and the same nodes:
 - agreement: share of pods with the same outcome in both runs (same node, or
   unscheduled in both). The kube-scheduler breaks ties at random, so two real
   runs do not reach 1 either: compare a simulator with that noise floor.
+- agreement_equiv: the same, once the nodes of identical allocatable (which the
+  scheduler cannot tell apart) are matched between the two runs so that as many
+  pods as possible agree (optimal assignment per class of identical nodes).
 - unsched_a, unsched_b: pods left unscheduled in each run.
 - w1_cpu, w1_mem: Wasserstein-1 distance between the per-node occupancy
   (requested / allocatable) of the two runs, over the same set of nodes.
@@ -32,7 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from scale_base import cpu_millicores, mem_bytes  # noqa: E402
 
 PAIR_COLUMNS = ["scale", "a_tool", "a_platform", "a_rep", "b_tool", "b_platform", "b_rep",
-                "pods", "agreement", "unsched_a", "unsched_b", "w1_cpu", "w1_mem",
+                "pods", "agreement", "agreement_equiv", "unsched_a", "unsched_b", "w1_cpu", "w1_mem",
                 "latency_p50_a", "latency_p50_b", "latency_p95_a", "latency_p95_b"]
 
 
@@ -89,6 +92,26 @@ def latencies(rows: list[dict]) -> list[float]:
             if r["node"] and r["t_scheduled"] and r["t_create"]]
 
 
+def agreement_up_to_identical_nodes(node_a: dict, node_b: dict, capacity: dict) -> float:
+    """Pod agreement after the best matching of identical nodes between the runs."""
+    from scipy.optimize import linear_sum_assignment
+
+    classes: dict[tuple, list[str]] = {}
+    for name, cap in capacity.items():
+        classes.setdefault(cap, []).append(name)
+    agree = sum(1 for p in node_a if not node_a[p] and not node_b[p])
+    for names in classes.values():
+        index = {n: i for i, n in enumerate(names)}
+        counts = [[0] * len(names) for _ in names]
+        for pod, na in node_a.items():
+            nb = node_b[pod]
+            if na in index and nb in index:
+                counts[index[na]][index[nb]] += 1
+        rows, cols = linear_sum_assignment(counts, maximize=True)
+        agree += sum(counts[r][c] for r, c in zip(rows, cols))
+    return agree / len(node_a)
+
+
 def compare(a: list[dict], b: list[dict], capacity: dict) -> dict:
     node_a = {r["pod"]: r["node"] for r in a}
     node_b = {r["pod"]: r["node"] for r in b}
@@ -100,6 +123,7 @@ def compare(a: list[dict], b: list[dict], capacity: dict) -> dict:
     lat_a, lat_b = latencies(a), latencies(b)
     fmt = lambda v: "" if v is None else f"{v:.6f}"  # noqa: E731
     return {"pods": len(node_a), "agreement": f"{same / len(node_a):.6f}",
+            "agreement_equiv": f"{agreement_up_to_identical_nodes(node_a, node_b, capacity):.6f}",
             "unsched_a": sum(1 for n in node_a.values() if not n),
             "unsched_b": sum(1 for n in node_b.values() if not n),
             "w1_cpu": f"{wasserstein_1d(cpu_a, cpu_b):.6f}",
