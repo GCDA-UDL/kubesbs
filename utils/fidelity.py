@@ -139,7 +139,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out", required=True)
     args = ap.parse_args(argv)
 
-    runs = read_runs(sorted(glob.glob(args.pods)))
+    runs = read_runs(sorted(p for p in glob.glob(args.pods) if not p.endswith(".watch.csv")))
     if not runs:
         raise SystemExit(f"no rows in {args.pods}")
     rows_out = []
