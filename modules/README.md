@@ -16,6 +16,7 @@ Modules are separated into different folders, each containing a bash script name
 | `k8ssim` | K8sSim — **Volcano** scheduler | opt-in (build binary) — see [k8ssim/README.md](k8ssim/README.md) |
 | `kcs` | pfn k8s-cluster-simulator (discrete-event) | opt-in (build binary) — see [kcs/README.md](kcs/README.md) |
 | `vanilla` | Real Kubernetes (kind) | experimental |
+| `real` | Real cluster for the fidelity study (`PROVIDER=k3d`: one k3s node per trace node, allocatable = scaled trace capacity) | opt-in — dataset from `utils/scale_base.py`, per-pod records with `POD_RECORDS_DIR` |
 | `template` | Copy-paste template for new modules | — |
 
 The active list consumed by `kube-director.sh` lives in the top-level `SIM_MODULES`

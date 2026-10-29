@@ -10,9 +10,13 @@ create_cluster(){
         log INFO "$CLUSTER_NAME already exists. Deleting..."
         kwokctl delete cluster --name "$CLUSTER_NAME" 2>/dev/null || true
     fi
+    # KWOK_KUBE_VERSION (e.g. v1.29.0) pins the control plane, so that the fidelity
+    # study compares the same kube-scheduler as the real cluster; unset keeps the
+    # behaviour of the published benchmark runs.
     kwokctl create cluster --name "$CLUSTER_NAME" \
     --timeout 60s \
-    --kind-node-image kindest/node:v1.29.0
+    --kind-node-image kindest/node:v1.29.0 \
+    ${KWOK_KUBE_VERSION:+--kube-version "$KWOK_KUBE_VERSION"}
 }
 
 cluster_setup(){

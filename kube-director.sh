@@ -139,6 +139,8 @@ clean_cluster() {
         kind delete clusters --all
     elif [[ ${SIMULATOR} = "kwok" ]]; then
         kwokctl delete cluster --all
+    elif [[ ${SIMULATOR} = "real" ]]; then
+        k3d cluster delete --all
     fi
 }
 
@@ -157,7 +159,7 @@ trap cleanup SIGINT
 for i in "${!SIMULATORS[@]}"; do
     [[ -z "${SIMULATORS[i]}" ]] && continue
     log INFO "Starting experiments for ${SIMULATORS[i]}"
-    if [[ ${SIMULATORS[i]} =~ ^(kwok|kube-sched|kcs)$ ]]; then
+    if [[ ${SIMULATORS[i]} =~ ^(kwok|kube-sched|kcs|real)$ ]]; then
         DATA_PATH="${EXPERIMENT_FILES_PATH}/vanilla"
     elif [[ ${SIMULATORS[i]} = "k8s" ]]; then
         DATA_PATH="${EXPERIMENT_FILES_PATH}/k8s"

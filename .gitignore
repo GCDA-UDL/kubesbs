@@ -50,3 +50,4 @@ tests/bash/.cache/
 output/
 modules/simkube/simkube-src/
 modules/simkube/kube-prometheus/
+data/fidelity/

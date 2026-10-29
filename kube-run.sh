@@ -43,7 +43,12 @@ Usage: $(basename "$0") -e EXPERIMENT_PATH -m SIMULATION_MODE [options]
 
 Required arguments:
   -e EXPERIMENT_PATH   Path to experiment files directory
-  -m SIMULATION_MODE   Simulator: simkube, kube-sched, kubemark, kwok, opensim, k8ssim
+  -m SIMULATION_MODE   Simulator: simkube, kube-sched, kubemark, kwok, opensim, k8ssim,
+                       or real (a real cluster; PROVIDER=k3d)
+
+Environment:
+  POD_RECORDS_DIR      If set, write the per-pod record of every run (pods.csv)
+                       there (utils/collect_pods.py); WORKLOAD labels it (default alibaba)
 
 Optional arguments:
   -n RUNS              Number of runs per experiment (default: $DEFAULT_RUNS)
@@ -143,7 +148,7 @@ parse_args() {
         exit 1
     fi
 
-    if [[ ! "$SIMULATION_MODE" =~ ^(simkube|kube-sched|kubemark|kwok|opensim|vanilla|k8ssim|kcs)$ ]]; then
+    if [[ ! "$SIMULATION_MODE" =~ ^(simkube|kube-sched|kubemark|kwok|opensim|vanilla|k8ssim|kcs|real)$ ]]; then
         log ERROR "Unsupported simulator '$SIMULATION_MODE'" >&2
         usage
         exit 1
@@ -310,6 +315,18 @@ wait_for_namespace(){
 wait_for_simulator_state(){
     # Dummy function
     :;
+}
+
+collect_pod_events(){
+    # Per-pod record of the run (pods.csv) for the fidelity study, only when
+    # POD_RECORDS_DIR is set. Modules without a Kubernetes API override it.
+    [[ -n "$POD_RECORDS_DIR" ]] || return 0
+    mkdir -p "$POD_RECORDS_DIR"
+    python3 "${SCRIPT_DIR}/utils/collect_pods.py" --namespace "$NAMESPACE" \
+        --out "${POD_RECORDS_DIR}/pods-${SIMULATION_MODE}-${PLATFORM:-sim}-${NODE_COUNT}-${CURRENT_RUN}.csv" \
+        --tool "$SIMULATION_MODE" --platform "${PLATFORM:-sim}" --scale "$NODE_COUNT" \
+        --rep "$CURRENT_RUN" --workload "${WORKLOAD:-alibaba}" \
+        || log WARN "Per-pod record failed for $NODE_COUNT nodes, run $CURRENT_RUN"
 }
 
 check_max_time(){
@@ -533,6 +550,9 @@ while IFS= read -r node_file; do
         fi
         echo "|${UNSCHEDULED_PODS:-0}" >> "$OUT_FILE"
         chmod 666 "$OUT_FILE"
+        if [[ $SETUP_OK = "true" ]]; then
+            collect_pod_events
+        fi
         cleanup_cluster
     done
 done < <(find "$EXPERIMENT_FILES_PATH" -name "$FILE_PATTERN" -type f | sort -V)
