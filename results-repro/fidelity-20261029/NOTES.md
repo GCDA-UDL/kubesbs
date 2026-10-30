@@ -39,7 +39,10 @@ command line, not from the CSVs.
 - Cost of the real cluster (spoofing-gcd): 1.8 GB / ~140 s CPU at 10 nodes, 22.2–22.7 GB
   / 7,100–8,600 s at 100 nodes; memory ≈ 0.16·N + 0.00065·N² GB. A step test on
   spoofing02 (192 GB, 1 run per size) found the CPU, not the memory, to be the limit:
-  200 nodes completed (2,094 pods, 21 unscheduled, 459 s); 300 nodes hit the 1-hour
+  200 nodes completed (2,094 pods, 21 unscheduled, 459 s, peak load 936), but a second
+  200-node attempt on 2026-10-30 was stopped by the load guard at a 1-min load of 1,596
+  on 32 threads with 2,048 pods still pending (load at 200 nodes varies from run to run);
+  300 nodes hit the 1-hour
   limit with 1,704 pods unscheduled, a load average in the thousands and an unresponsive
   sshd while the cluster was deleted (peak cluster memory ~97 GB, at least 57 GB free);
   at 500 nodes k3d could not start the cluster (Docker timeouts). The study stops at

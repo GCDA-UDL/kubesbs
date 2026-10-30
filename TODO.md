@@ -52,7 +52,10 @@ real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
       at 500 nodes, more than spoofing02's 187 GB. In the 2026-10-29 step test on spoofing02
       the CPU gave out first: 200 nodes ran, 300 nodes timed out with a load in the thousands
       (sshd unresponsive until the next morning), 500 nodes never started (local copy:
-      `results/fidelity-scaleup-2026-10-29/`). A lean configuration should remove most of the N² term: flannel off
+      `results/fidelity-scaleup-2026-10-29/`). A second 200-node attempt (2026-10-30) was
+      stopped by the load guard (load 1,596, 2,048 pods pending), so one host is not reliable
+      above ~100 nodes; maintainer decision 2026-10-30: the matrix stays at 10–100 nodes, and
+      larger sizes need a multi-host cluster. A lean configuration should remove most of the N² term: flannel off
       (`--flannel-backend=none` + a local `bridge` CNI per node), `--disable-network-policy`,
       `--disable-kube-proxy` (pods are `pause`, no Services). Check at 100 nodes that the
       placement stays within the real-vs-real noise before scaling, and abort on load /
