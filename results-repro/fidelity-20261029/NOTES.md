@@ -37,8 +37,13 @@ command line, not from the CSVs.
   at the end of its matrix. The scheduler shares the CPU with every node's kubelet.
 - Placement is not affected: the two hosts agree as much as runs on one host.
 - Cost of the real cluster (spoofing-gcd): 1.8 GB / ~140 s CPU at 10 nodes, 22.2–22.7 GB
-  / 7,100–8,600 s at 100 nodes; memory ≈ 0.16·N + 0.00065·N² GB. A 500-node attempt
-  on spoofing02 (192 GB) made the host unresponsive; the study stops at 100 nodes.
+  / 7,100–8,600 s at 100 nodes; memory ≈ 0.16·N + 0.00065·N² GB. A step test on
+  spoofing02 (192 GB, 1 run per size) found the CPU, not the memory, to be the limit:
+  200 nodes completed (2,094 pods, 21 unscheduled, 459 s); 300 nodes hit the 1-hour
+  limit with 1,704 pods unscheduled, a load average in the thousands and an unresponsive
+  sshd while the cluster was deleted (peak cluster memory ~97 GB, at least 57 GB free);
+  at 500 nodes k3d could not start the cluster (Docker timeouts). The study stops at
+  100 nodes. Those runs are not part of this folder.
 - KWOK is the only simulator compared.
 
 ## Regenerate

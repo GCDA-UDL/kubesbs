@@ -49,8 +49,10 @@ real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
 
 - [ ] *(optional)* **Real cluster beyond 100 nodes on one host.** The measured cost of the
       k3d cluster (spoofing-gcd, cgroup v2) grows as ≈ 0.16·N + 0.00065·N² GB, i.e. ≈ 241 GB
-      at 500 nodes, more than spoofing02's 187 GB; a 500-node attempt hung spoofing02 on
-      2026-10-29. A lean configuration should remove most of the N² term: flannel off
+      at 500 nodes, more than spoofing02's 187 GB. In the 2026-10-29 step test on spoofing02
+      the CPU gave out first: 200 nodes ran, 300 nodes timed out with a load in the thousands
+      (sshd unresponsive until the next morning), 500 nodes never started (local copy:
+      `results/fidelity-scaleup-2026-10-29/`). A lean configuration should remove most of the N² term: flannel off
       (`--flannel-backend=none` + a local `bridge` CNI per node), `--disable-network-policy`,
       `--disable-kube-proxy` (pods are `pause`, no Services). Check at 100 nodes that the
       placement stays within the real-vs-real noise before scaling, and abort on load /
