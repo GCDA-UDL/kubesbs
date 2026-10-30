@@ -3,7 +3,7 @@
   "upload_type": "software",
   "description": "KubeSBS (formerly k8s-sims) orchestrates and benchmarks Kubernetes scheduler simulators (kwok, OpenSimulator, kube-scheduler-simulator, SimKube, Kubemark, K8sSim/Volcano, and the pfn k8s-cluster-simulator) over Alibaba, Google Borg, and Azure cluster traces, reporting CPU, memory, run time, and scheduling outcomes. Developed by the GCDA group (Grupo de Computación Distribuida y Avanzada, Universitat de Lleida) as the experimental artifact of a survey on Kubernetes simulation tools. Based on the original toolkit by Matias Medina (TFG UdL 2025, v0.1).",
   "creators": [
-    { "name": "Medina Jara, Matias Nicolas", "orcid": "0009-0000-2858-4317", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" },
+    { "name": "Medina, Matias", "orcid": "0009-0000-2858-4317", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" },
     { "name": "Tomàs, Rosana", "orcid": "0000-0002-1995-3974", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" },
     { "name": "Lérida, Josep Lluís", "orcid": "0000-0002-9352-9338", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" },
     { "name": "Guirado, Fernando", "orcid": "0000-0003-1352-9555", "affiliation": "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)" },

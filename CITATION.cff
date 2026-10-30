@@ -13,8 +13,8 @@ abstract: >-
   simulation tools.
 type: software
 authors:
-  - given-names: Matias Nicolas
-    family-names: Medina Jara
+  - given-names: Matias
+    family-names: Medina
     orcid: "https://orcid.org/0009-0000-2858-4317"
     affiliation: "SEMBAC, Universitat de Lleida, Edifici CREA, C/Pere de Cabrera s/n. 25001 Lleida (Spain)"
     # original author of v0.1 (TFG UdL 2025)
