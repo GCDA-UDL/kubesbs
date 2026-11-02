@@ -79,7 +79,9 @@ real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
       include the author names, SEMBAC, Lleida, UdL, GCDA/GCD, `spoofing` (host and
       folder names), the e-mail and the funder. Put its URL in `\artefacturl` (review)
       and in the `anonartifact` bib entry of the paper.
-- [ ] At submission: tag `repro-kubesbs` **v1.0.0** and the paper repo **`sub1`**.
+- [ ] At submission: tag `repro-kubesbs` **v1.0.0** and the paper repo **`sub1`**. Its metadata
+      (CITATION.cff, .zenodo.json, README) must say "Josep L. Lérida" (the form he signs with,
+      2026-11-02) and "Matias Medina"; the frozen `kubesbs/` copy comes from the next KubeSBS tag.
 - [ ] Camera-ready: create the Zenodo community `gcd-udl` (does not exist yet), enable
       Zenodo for `repro-kubesbs`, publish the release, and add the concept DOI to the
       paper's `kubesbsartifact` entry and to the README badge.
