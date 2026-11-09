@@ -46,7 +46,9 @@ command line, not from the CSVs.
   limit with 1,704 pods unscheduled, a load average in the thousands and an unresponsive
   sshd while the cluster was deleted (peak cluster memory ~97 GB, at least 57 GB free);
   at 500 nodes k3d could not start the cluster (Docker timeouts). The study stops at
-  100 nodes. Those runs are not part of this folder.
+  100 nodes. The logs of the step test and of the second 200-node run, with the
+  scripts and their memory and load guards, are in `spoofing02-steptest/` (see its
+  README); they are not part of the fidelity table.
 - KWOK is the only simulator compared.
 
 ## Regenerate
