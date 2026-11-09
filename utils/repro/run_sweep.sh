@@ -20,6 +20,9 @@
 #   DNS            space-separated DNS servers for the runner container, e.g. "8.8.8.8 1.1.1.1"
 #                  (default: the host's resolver)
 #   PREFLIGHT      1 = check name resolution and the host ARP table limit first (default: 1)
+#   KCS_BIN        kcs-yamlsim binary to mount     (default: modules/kcs/kcs-yamlsim)
+#   KCS_DURATION, KCS_GPU, KCS_HORIZON
+#                  passed to the kcs module (see modules/kcs/module.sh); unset = module defaults
 #
 # Compare the new run with the published reference afterwards, e.g.:
 #   python3 utils/repro/compare_runs.py results-repro/benchmark-all "$OUT"
@@ -34,6 +37,7 @@ MAX_TIME="${MAX_TIME:-7200}"
 DNS="${DNS:-}"
 PREFLIGHT="${PREFLIGHT:-1}"
 OUT="${OUT:-results-repro/${DATASET}-$(hostname -s)-$(date +%Y%m%d)}"
+KCS_BIN="${KCS_BIN:-modules/kcs/kcs-yamlsim}"
 
 [[ -f kube-director.sh ]] || { echo "Run this from the repository root."; exit 1; }
 [[ -d "data/${DATASET}" ]] || { echo "Dataset not found: data/${DATASET}"; exit 1; }
@@ -68,7 +72,7 @@ fi
 mkdir -p "$OUT"
 OUT_ABS="$(cd "$OUT" && pwd)"
 
-if [[ " $MODULES " == *" kcs "* && ! -f modules/kcs/kcs-yamlsim ]]; then
+if [[ " $MODULES " == *" kcs "* && "$KCS_BIN" == "modules/kcs/kcs-yamlsim" && ! -f modules/kcs/kcs-yamlsim ]]; then
   echo "==> Building kcs-yamlsim (static linux/amd64)"
   docker run --rm -v "$PWD":/work -w /work -e CGO_ENABLED=0 golang:1.24-alpine \
     sh -c "apk add --no-cache git bash >/dev/null && bash modules/kcs/build.sh"
@@ -89,15 +93,24 @@ printf '%s\n' $MODULES > "$OUT_ABS/SIM_MODULES"
   echo "max_time=${MAX_TIME}"
   echo "dns=${DNS:-host}"
   echo "neigh_gc_thresh=$(neigh gc_thresh1)/$(neigh gc_thresh2)/$(neigh gc_thresh3)"
+  if [[ " $MODULES " == *" kcs "* ]]; then
+    echo "kcs_bin_sha256=$(sha256sum "$KCS_BIN" 2>/dev/null | cut -d' ' -f1)"
+    echo "kcs_duration=${KCS_DURATION:-default} kcs_gpu=${KCS_GPU:-default} kcs_horizon=${KCS_HORIZON:-default}"
+  fi
   echo "cpus=$(nproc)"
   echo "mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)"
 } > "$OUT_ABS/RUN_INFO"
 cat "$OUT_ABS/RUN_INFO"
 
 kcs_mount=()
-if [[ -f modules/kcs/kcs-yamlsim ]]; then
-  kcs_mount=(-v "$PWD/modules/kcs/kcs-yamlsim":/usr/local/bin/kcs-yamlsim:ro)
+if [[ -f "$KCS_BIN" ]]; then
+  kcs_mount=(-v "$(cd "$(dirname "$KCS_BIN")" && pwd)/$(basename "$KCS_BIN")":/usr/local/bin/kcs-yamlsim:ro
+             -e K8S_CLUSTER_SIM_BIN=/usr/local/bin/kcs-yamlsim)
 fi
+kcs_env=()
+for v in KCS_DURATION KCS_GPU KCS_HORIZON; do
+  if [[ -n "${!v:-}" ]]; then kcs_env+=(-e "$v=${!v}"); fi
+done
 
 # The full output is large (dockerd logs); keep only the harness lines, which
 # utils/repro/run_phases.py turns into per-phase run times.
@@ -106,6 +119,7 @@ set +e
 docker run --rm --privileged --cgroupns host \
   "${dns_flags[@]}" \
   -e CONTAINERIZED=true \
+  "${kcs_env[@]}" \
   -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
   -v "$PWD/data":/data:ro \
   -v "$PWD/modules":/modules:rw \

@@ -60,6 +60,27 @@ log (pods that never left the queue).
 ./kube-run.sh -m kcs -e ./data/small/vanilla -n 1 -o ./results/kcs.csv
 ```
 
+### What the default run simulates, and the options that change it
+
+By default (`KCS_DURATION=60`, `KCS_GPU=1`, `KCS_HORIZON=0`) every pod runs for 60
+simulated seconds and then frees its node, the trace's GPU counts become
+`nvidia.com/gpu` requests and capacities, and the run ends only when every pod
+has run and finished. kcs's scheduler takes the pods in queue order and stops at
+the first pod that fits no node until a later tick (upstream
+`pkg/scheduler/generic_scheduler.go`), so a pod that does not fit blocks the pods
+behind it until running pods finish. The final pending count of a default run is
+therefore always 0: it does not measure the same outcome as the tools that place
+each pod once and stop.
+
+- `KCS_GPU=0` drops the GPU counts of nodes and pods, as the other tools see
+  only CPU and memory.
+- `KCS_HORIZON=<s>` stops the simulation after `s` simulated seconds. With
+  `KCS_DURATION` larger than the horizon no pod finishes, and the pods pending
+  at the end are those kcs could not place.
+
+`utils/repro/run_sweep.sh` forwards these variables to the runner container and
+records them, with the sha256 of the binary, in `RUN_INFO`.
+
 Opt-in (not in the default `SIM_MODULES`): needs the binary built. `kube-director.sh`
 maps `kcs` to the `vanilla/` data path, so it can be added to a custom `SIM_MODULES`.
 

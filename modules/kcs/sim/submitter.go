@@ -6,11 +6,23 @@
 // needs (one execution phase of --duration seconds at the pod's requested
 // resources). After submitting the batch it terminates itself, so KubeSim.Run
 // returns once the cluster drains.
+//
+// Two options make the workload match the other tools of the toolkit:
+//   - gpu=false drops the GPU annotations (the other tools only see CPU and
+//     memory requests);
+//   - horizon>0 keeps the submitter alive and cancels the simulation once the
+//     simulated clock has advanced horizon seconds. With a --duration longer
+//     than the horizon no pod finishes, so the pods still pending at the end are
+//     the pods kcs could not place, as for the tools that run a control plane.
+//     Without it (horizon=0, the default) the run ends only when every pod has
+//     run and finished, so no pod is ever left pending.
 package main
 
 import (
+	"context"
 	"io"
 	"os"
+	"time"
 
 	yaml "gopkg.in/yaml.v2"
 	v1 "k8s.io/api/core/v1"
@@ -42,11 +54,16 @@ type rawPod struct {
 }
 
 type yamlSubmitter struct {
-	pods []*v1.Pod
-	done bool
+	pods    []*v1.Pod
+	done    bool
+	horizon time.Duration
+	cancel  context.CancelFunc
+	start   clock.Clock
 }
 
-func newYAMLSubmitter(podsPath string, durationSec int) *yamlSubmitter {
+func newYAMLSubmitter(podsPath string, durationSec int, useGPU bool,
+	horizonSec int, cancel context.CancelFunc) *yamlSubmitter {
+
 	f, err := os.Open(podsPath)
 	if err != nil {
 		log.L.WithError(err).Fatalf("cannot open pods file %s", podsPath)
@@ -65,28 +82,45 @@ func newYAMLSubmitter(podsPath string, durationSec int) *yamlSubmitter {
 		if err != nil || len(r.Spec.Containers) == 0 {
 			continue
 		}
+		if !useGPU {
+			delete(r.Metadata.Annotations, "nvidia.com/gpu")
+			delete(r.Metadata.Annotations, "alibabacloud.com/gpu-count")
+		}
 		p := buildPod(r, idx, durationSec)
 		if p != nil {
 			pods = append(pods, p)
 			idx++
 		}
 	}
-	log.L.Infof("yamlSubmitter: loaded %d pods from %s", len(pods), podsPath)
-	return &yamlSubmitter{pods: pods}
+	log.L.Infof("yamlSubmitter: loaded %d pods from %s (gpu=%v, horizon=%ds)",
+		len(pods), podsPath, useGPU, horizonSec)
+	return &yamlSubmitter{
+		pods:    pods,
+		horizon: time.Duration(horizonSec) * time.Second,
+		cancel:  cancel,
+	}
 }
 
 func (s *yamlSubmitter) Submit(
-	_ clock.Clock, _ algorithm.NodeLister, _ metrics.Metrics) ([]submitter.Event, error) {
+	clk clock.Clock, _ algorithm.NodeLister, _ metrics.Metrics) ([]submitter.Event, error) {
 
 	if s.done {
+		// Horizon mode: the submitter stays registered so that it sees the
+		// clock, and stops the simulation once the horizon has passed.
+		if s.horizon > 0 && clk.Sub(s.start) >= s.horizon {
+			s.cancel()
+		}
 		return []submitter.Event{}, nil
 	}
 	s.done = true
+	s.start = clk
 	events := make([]submitter.Event, 0, len(s.pods)+1)
 	for _, p := range s.pods {
 		events = append(events, &submitter.SubmitEvent{Pod: p})
 	}
-	events = append(events, &submitter.TerminateSubmitterEvent{})
+	if s.horizon == 0 {
+		events = append(events, &submitter.TerminateSubmitterEvent{})
+	}
 	return events, nil
 }
 

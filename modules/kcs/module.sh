@@ -18,6 +18,14 @@
 readonly LOCAL_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly CGROUP_NAME="kcs"
 readonly KCS_DURATION="${KCS_DURATION:-60}"   # simulated seconds each pod runs
+# KCS_GPU=1 (default) turns the Alibaba GPU counts of nodes and pods into
+# nvidia.com/gpu; KCS_GPU=0 drops them, as the other tools see only CPU and memory.
+readonly KCS_GPU="${KCS_GPU:-1}"
+# KCS_HORIZON=0 (default) runs until every pod has run and finished, so no pod is
+# left pending. KCS_HORIZON=<s> stops after s simulated seconds; with
+# KCS_DURATION > KCS_HORIZON no pod finishes and the pods pending at the end are
+# the pods kcs could not place (the outcome the other tools report).
+readonly KCS_HORIZON="${KCS_HORIZON:-0}"
 readonly KCS_METRICS="${LOCAL_PATH}/kcs-metrics.jsonl"
 readonly KCS_CONFIG="${LOCAL_PATH}/kcs-config.yaml"
 
@@ -68,15 +76,18 @@ deploy_objects(){
     local POD_FILE="$2"
     local BIN; BIN="$(resolve_binary)"
 
-    python3 "${LOCAL_PATH}/kcs_config.py" --nodes "$NODE_FILE" --metrics "$KCS_METRICS" -o "$KCS_CONFIG" \
+    local GPU_FLAG=() BIN_GPU="true"
+    if [[ "$KCS_GPU" == "0" ]]; then GPU_FLAG=(--no-gpu); BIN_GPU="false"; fi
+    python3 "${LOCAL_PATH}/kcs_config.py" --nodes "$NODE_FILE" --metrics "$KCS_METRICS" -o "$KCS_CONFIG" "${GPU_FLAG[@]}" \
         || { log ERROR "kcs config generation failed"; UNSCHEDULED_PODS=0; return 1; }
     rm -f "$KCS_METRICS"
 
-    log INFO "Running kcs: $(basename "$NODE_FILE") + $(basename "$POD_FILE") (duration ${KCS_DURATION}s)"
+    log INFO "Running kcs: $(basename "$NODE_FILE") + $(basename "$POD_FILE") (duration ${KCS_DURATION}s, gpu ${KCS_GPU}, horizon ${KCS_HORIZON}s)"
     # --config takes the path without extension; KubeSim appends .yaml.
     local CFG_NOEXT="${KCS_CONFIG%.yaml}"
     cgexec -g "memory,cpu:/$CGROUP_NAME" "$BIN" \
         --config "$CFG_NOEXT" --pods "$POD_FILE" --duration "$KCS_DURATION" \
+        --gpu="$BIN_GPU" --horizon "$KCS_HORIZON" \
         > "${LOCAL_PATH}/kcs-run.out" 2>&1 || log WARN "kcs binary returned non-zero"
 
     # Unscheduled = pods still pending in the final metrics record.

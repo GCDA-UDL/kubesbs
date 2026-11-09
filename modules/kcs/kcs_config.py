@@ -9,13 +9,13 @@ and the Alibaba GPU annotation `alibabacloud.com/gpu-count` becomes
 --metrics, from which the module reads the final Queue.PendingPodsNum (= pods
 that never scheduled = unscheduled).
 
-Usage: kcs_config.py --nodes nodes-100.yaml --metrics /tmp/kcs.jsonl -o config.yaml
+Usage: kcs_config.py --nodes nodes-100.yaml --metrics /tmp/kcs.jsonl -o config.yaml [--no-gpu]
 """
 import argparse
 import yaml
 
 
-def node_to_entry(node: dict) -> dict:
+def node_to_entry(node: dict, use_gpu: bool = True) -> dict:
     meta = node.get("metadata", {})
     alloc = node.get("status", {}).get("allocatable", {})
     out_alloc = {}
@@ -23,7 +23,7 @@ def node_to_entry(node: dict) -> dict:
         if key in alloc:
             out_alloc[key] = str(alloc[key])
     gpu = alloc.get("nvidia.com/gpu") or alloc.get("alibabacloud.com/gpu-count")
-    if gpu:
+    if gpu and use_gpu:
         out_alloc["nvidia.com/gpu"] = str(gpu)
     out_alloc.setdefault("cpu", "1")
     out_alloc.setdefault("memory", "1Gi")
@@ -42,11 +42,13 @@ def main():
     ap.add_argument("-o", "--output", required=True)
     ap.add_argument("--tick", type=int, default=10)
     ap.add_argument("--metrics-tick", type=int, default=30)
+    ap.add_argument("--no-gpu", action="store_true",
+                    help="drop the nodes' GPUs (the other tools only see CPU and memory)")
     args = ap.parse_args()
 
     with open(args.nodes) as fh:
         nodes = [n for n in yaml.safe_load_all(fh) if n]
-    cluster = [node_to_entry(n) for n in nodes]
+    cluster = [node_to_entry(n, use_gpu=not args.no_gpu) for n in nodes]
 
     cfg = {
         "tick": args.tick,
