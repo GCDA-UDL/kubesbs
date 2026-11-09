@@ -75,10 +75,21 @@ real k3d on spoofing02 and spoofing-gcd + KWOK, 10–100 nodes, 3 repetitions.
 ### Paper submission (SIGMETRICS 2027, abstract 4 Jan, paper 11 Jan 2027)
 
 - [ ] **Anonymous artefact** for the double-blind review: anonymous.4open.science copy of
-      `GCDA-UDL/repro-kubesbs` (needs the maintainer's GitHub login there). Terms to hide
-      include the author names, SEMBAC, Lleida, UdL, GCDA/GCD, `spoofing` (host and
-      folder names), the e-mail and the funder. Put its URL in `\artefacturl` (review)
-      and in the `anonartifact` bib entry of the paper.
+      `GCDA-UDL/repro-kubesbs` (needs the maintainer's GitHub login there). Light
+      anonymisation (maintainer decision 2026-11-09: "no hace falta hacerlo tan
+      anónimo"): hide the author names, SEMBAC, Lleida, UdL, GCDA/GCD, the e-mail and
+      the funder; keep the Docker Hub account `thesmuks` (the image references must keep
+      working) and the host names. Put its URL in `\artefacturl` (review) and in the
+      `anonartifact` bib entry of the paper.
+- [ ] **repro-kubesbs, next version (before the anonymous copy):** bring in from KubeSBS
+      the executable `kube-director.sh`/`kube-run.sh` (a fresh clone failed with exit 126),
+      the kcs options and module fix (5080669, 0e537ac), `results-repro/kcs-check-20261109/`
+      with `utils/repro/kcs_check_summary.py`, the spoofing02 step-test logs
+      (`results-repro/fidelity-20261029/spoofing02-steptest/`), `results-repro/RUNNER_IMAGE.md`,
+      and the new `paper_tables.py` (sample SD) and `fidelity_report.py` (permutation
+      test); check that `reproduce.sh` regenerates the paper's new `variability.tex`,
+      `summary.txt` and `fidelity-summary.txt`. The paper (Sec. 9 Reproducibility) says
+      the artefact contains the kcs check and the step-test logs.
 - [ ] At submission: tag `repro-kubesbs` **v1.0.0** and the paper repo **`sub1`**. Its metadata
       (CITATION.cff, .zenodo.json, README) must say "Josep L. Lérida" (the form he signs with,
       2026-11-02) and "Matias Medina"; the frozen `kubesbs/` copy comes from the next KubeSBS tag.

@@ -91,6 +91,7 @@ printf '%s\n' $MODULES > "$OUT_ABS/SIM_MODULES"
   echo "modules=$(paste -sd' ' "$OUT_ABS/SIM_MODULES")"
   echo "runs=${RUNS}"
   echo "max_time=${MAX_TIME}"
+  echo "mem_threshold=${MEM_THRESHOLD}"
   echo "dns=${DNS:-host}"
   echo "neigh_gc_thresh=$(neigh gc_thresh1)/$(neigh gc_thresh2)/$(neigh gc_thresh3)"
   if [[ " $MODULES " == *" kcs "* ]]; then

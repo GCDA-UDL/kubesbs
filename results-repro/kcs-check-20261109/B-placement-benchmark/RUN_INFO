@@ -1,0 +1,15 @@
+date=2026-11-09T17:51:38+01:00
+host=spoofing.udl.cat
+commit=5080669e22b78b528dcbbcf07a9f6c3ca022e019
+image=thesmuks/k8s-sims@sha256:162f8e963bc29eb224bf0f1f3110e7b7d9159fdf957c7894d8275a500d015ed4
+image_id=sha256:49601a9c8550dd83012a730d2acef735151dce05b1062833f35e81179dbe7adf
+dataset=benchmark
+modules=kcs
+runs=3
+max_time=7200
+dns=host
+neigh_gc_thresh=4096/8192/16384
+kcs_bin_sha256=cab32545f4106696ad6319ebc01fd109c653d34f955c1542ef7238eec4a34a34
+kcs_duration=10000000 kcs_gpu=0 kcs_horizon=120
+cpus=40
+mem_kb=131125584
