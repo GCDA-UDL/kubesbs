@@ -76,21 +76,27 @@ deploy_objects(){
     local POD_FILE="$2"
     local BIN; BIN="$(resolve_binary)"
 
-    local GPU_FLAG=() BIN_GPU="true"
-    if [[ "$KCS_GPU" == "0" ]]; then GPU_FLAG=(--no-gpu); BIN_GPU="false"; fi
+    local POD_COUNT; POD_COUNT=$(grep -c '^kind: Pod' "$POD_FILE")
+    local GPU_FLAG=() BIN_FLAGS=()
+    # The new flags are passed only when they differ from the defaults, so that the
+    # binary of the published runs (which does not know them) still works.
+    if [[ "$KCS_GPU" == "0" ]]; then GPU_FLAG=(--no-gpu); BIN_FLAGS+=(--gpu=false); fi
+    if [[ "$KCS_HORIZON" != "0" ]]; then BIN_FLAGS+=(--horizon "$KCS_HORIZON"); fi
     python3 "${LOCAL_PATH}/kcs_config.py" --nodes "$NODE_FILE" --metrics "$KCS_METRICS" -o "$KCS_CONFIG" "${GPU_FLAG[@]}" \
-        || { log ERROR "kcs config generation failed"; UNSCHEDULED_PODS=0; return 1; }
+        || { log ERROR "kcs config generation failed"; UNSCHEDULED_PODS=$POD_COUNT; return 1; }
     rm -f "$KCS_METRICS"
 
     log INFO "Running kcs: $(basename "$NODE_FILE") + $(basename "$POD_FILE") (duration ${KCS_DURATION}s, gpu ${KCS_GPU}, horizon ${KCS_HORIZON}s)"
     # --config takes the path without extension; KubeSim appends .yaml.
     local CFG_NOEXT="${KCS_CONFIG%.yaml}"
+    local RC=0
     cgexec -g "memory,cpu:/$CGROUP_NAME" "$BIN" \
-        --config "$CFG_NOEXT" --pods "$POD_FILE" --duration "$KCS_DURATION" \
-        --gpu="$BIN_GPU" --horizon "$KCS_HORIZON" \
-        > "${LOCAL_PATH}/kcs-run.out" 2>&1 || log WARN "kcs binary returned non-zero"
+        --config "$CFG_NOEXT" --pods "$POD_FILE" --duration "$KCS_DURATION" "${BIN_FLAGS[@]}" \
+        > "${LOCAL_PATH}/kcs-run.out" 2>&1 || RC=$?
 
-    # Unscheduled = pods still pending in the final metrics record.
+    # Unscheduled = pods still pending in the final metrics record. A failed run
+    # (no metrics) must not look like a run that placed every pod: it counts all
+    # pods as unscheduled and logs an error with the binary's last output line.
     UNSCHEDULED_PODS=$(python3 -c '
 import json,sys
 last=None
@@ -98,11 +104,14 @@ try:
     for line in open(sys.argv[1]):
         line=line.strip()
         if line: last=json.loads(line)
-    print(int(last["Queue"]["PendingPodsNum"]) if last else 0)
+    print(int(last["Queue"]["PendingPodsNum"]) if last else "")
 except Exception:
-    print(0)
+    print("")
 ' "$KCS_METRICS" 2>/dev/null)
-    [[ -z "$UNSCHEDULED_PODS" ]] && UNSCHEDULED_PODS=0
+    if [[ "$RC" != "0" || -z "$UNSCHEDULED_PODS" ]]; then
+        log ERROR "kcs run failed (exit $RC, metrics: ${UNSCHEDULED_PODS:-none}): $(tail -n 1 "${LOCAL_PATH}/kcs-run.out")"
+        UNSCHEDULED_PODS=$POD_COUNT
+    fi
     log INFO "kcs unscheduled (final pending): $UNSCHEDULED_PODS"
 }
 

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Tables for the paper, as LaTeX fragments plus a plain-text summary.
 
-  variability.tex  within-session spread (coefficient of variation of the runs
-                   at each node count, median over node counts) and the
+  variability.tex  within-session spread (coefficient of variation, sample
+                   standard deviation, of the runs of a session at each node
+                   count; median over node counts and both sessions) and the
                    difference between the session means, per simulator.
   scaling.tex      cost-scaling exponent b of  metric = a * nodes^b  (least
                    squares on log-log over the pooled means) and its R^2.
@@ -38,8 +39,9 @@ COST = [("run_time", "Run time", 5), ("total_cpu_seconds", "CPU time", 5), ("mem
 
 
 def cv(vals):
+    """Coefficient of variation with the sample standard deviation (n - 1)."""
     m = st.mean(vals)
-    return st.pstdev(vals) / m if m > 0 and len(vals) > 1 else None
+    return st.stdev(vals) / m if m > 0 and len(vals) > 1 else None
 
 
 def unsched_share(runs):
@@ -100,6 +102,15 @@ def main():
                         if m1 >= floor:
                             between.append((m2 - m1) / m1)
             cells.append((st.median(within) if within else None, between))
+        # per-session medians, for the text (the table pools both sessions)
+        for sname, sdata in sessions:
+            per = []
+            for key, _, floor in COST:
+                vals = [cv([r[key] for r in runs]) for runs in sdata.get(sim, {}).values()
+                        if st.mean(r[key] for r in runs) >= floor]
+                vals = [v for v in vals if v is not None]
+                per.append(f"{key}={st.median(vals):.1%}" if vals else f"{key}=n/a")
+            lines.append(f"{sim}: within-CV median, {sname} only: " + ", ".join(per))
         us = [x for runs in data[sim].values() for x in unsched_share(runs)]
         rows.append((sim, cells, max(us) if us else 0.0))
         lines.append(f"{sim}: within-CV median " +

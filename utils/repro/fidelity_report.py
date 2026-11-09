@@ -201,6 +201,49 @@ def main(argv=None):
                 parts.append(f"{key} " + fmt.format(scale_by * mean)
                              + f" [{fmt.format(scale_by * lo)}, {fmt.format(scale_by * hi)}]")
             out.append(f"  {g:20s} n={len(metric(scale, g, 'w1_cpu'))}  " + "  ".join(parts))
+    # Latency sanity and pod creation rate per platform and scale: the creation time
+    # is the arrival of the pod at the watch, so on a loaded host it can lag the
+    # scheduler's event (negative latency).
+    out.append("\n== negative latencies and creation rate (per run)")
+    for scale in scales:
+        for (kind, name, sc, rep), rows in sorted(runs.items()):
+            if sc != scale:
+                continue
+            lt = [1000 * v for v in fidelity.latencies(rows)]
+            neg = [v for v in lt if v < 0]
+            tc = sorted(float(r["t_create"]) for r in rows if r["t_create"])
+            gaps = [b - c for c, b in zip(tc, tc[1:])]
+            out.append(f"  {scale:4d} {name:14s} #{rep}  negative {len(neg)}/{len(lt)} "
+                       f"({100 * len(neg) / len(lt):.1f}%, min {min(lt):.1f} ms)  "
+                       f"creation inter-arrival median {1000 * st.median(gaps):.1f} ms")
+
+    # Exact permutation test per scale and simulator: are the simulator's runs
+    # exchangeable with the real runs? Statistic: mean metric over simulator-vs-real
+    # pairs minus mean over real-vs-real pairs, for every way of labelling as many
+    # runs "simulator" as there are simulator runs (84 labellings for 3 + 6 runs).
+    out.append("\n== permutation test, simulator-vs-real minus real-vs-real (one-sided: "
+               "lower agreement / larger W1)")
+    for s in sims:
+        for scale in scales:
+            keys = sorted(k for k in runs if k[2] == scale and (k[0] == "real" or k[1] == s))
+            label = {k: f"{k[1]}#{k[3]}" for k in keys}
+            pm = {frozenset((p["a"], p["b"])): p for p in pairs if p["scale"] == scale}
+            observed = {label[k] for k in keys if k[0] == "sim"}
+            names = [label[k] for k in keys]
+            for key, lower in (("agreement_equiv", True), ("w1_cpu", False)):
+                def diff(simset):
+                    cross = [float(pm[frozenset((x, y))][key]) for x, y in itertools.combinations(names, 2)
+                             if (x in simset) != (y in simset)]
+                    rr = [float(pm[frozenset((x, y))][key]) for x, y in itertools.combinations(names, 2)
+                          if x not in simset and y not in simset]
+                    return st.mean(cross) - st.mean(rr)
+                d0 = diff(observed)
+                ds = [diff(set(c)) for c in itertools.combinations(names, len(observed))]
+                eps = 1e-12
+                p = sum(1 for d in ds if (d <= d0 + eps if lower else d >= d0 - eps)) / len(ds)
+                out.append(f"  {s} {scale:4d} {key:16s} diff {100 * d0:+.2f} pp  p = {p:.3f} "
+                           f"({len(ds)} labellings)")
+
     with open(o("fidelity-summary.txt"), "w", encoding="utf-8") as fh:
         fh.write("\n".join(out) + "\n")
     print("\n".join(out))
